@@ -8,7 +8,7 @@ A fully self-contained static prototype of Paco’s Day 1 with added sound effec
 - Success / complication chimes after the die settles.
 - Door-opening audio when entering Day 1 from the calendar.
 - Sound-effects enable/disable toggle. Preference persists across reloads.
-- Explicit Play/Pause Music toggle that works with phone browser policies.
+- Music cues automatically when Day 1 is opened (iOS Safari blocks true autoplay before a tap, so the door tap is the first gesture that starts it). Music on/off toggle persists across reloads; turning it off keeps music silent.
 - Original, synthesized **demo** Day 1 ambient loop (40s). **This is NOT a Suno track** and should be replaced with a Suno instrumental as soon as selected.
 - Dice generation, outcomes and save system intentionally unchanged. No backend, multiplayer, analytics or permissions.
 
