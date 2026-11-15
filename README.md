@@ -1,8 +1,18 @@
-# The Twenty-Fourth Bell — Audio v0.2 (GitHub Pages)
+# The Twenty-Fourth Bell — v0.3 Four-Player Foundation (GitHub Pages)
 
-A fully self-contained static prototype of Paco’s Day 1 with added sound effects and music controls.
+A four-player, server-backed version of Paco's Day 1. Sign in with an email magic link, claim a character seat, and your progress saves to the party so it follows you across devices.
 
-## What's new
+## What's new in v0.3
+
+- **Sign-in:** Email magic link (passwordless). Invite-only: new sign-ups are disabled in Supabase; only invited family members can sign in.
+- **Character select:** Six classes (Rogue, Wizard, Fighter, Cleric, Ranger, Bard). Four seats. Paco the Rogue keeps the real Day 1 story; the other classes are clearly labeled placeholders with a small temporary discovery to try.
+- **Server-backed progress:** Your Day 1 choice and dice outcome are saved in Supabase (player_state), not just this browser. Refreshing or switching devices keeps your result. Paco's existing Day 1 from the prototype is migrated to the server on first sign-in.
+- **Server-side dice:** Tapping Roll calls a database function that generates the d20 on the server and saves it atomically, so a refresh cannot reroll. The 1.55-second animation and the landing sound cue are unchanged.
+- **Share discovery:** After learning a clue, Paco can tap "Share discovery with party" to publish only that clue to the shared party journal. Private journal entries (including the Renn secret) are never shared.
+- **Party screen:** Shows the real claimed seats and the shared journal entries, live from the server.
+- **Backend:** Supabase (free tier) project "the-twenty-fourth-bell", region us-west-1. Tables: parties, players, player_state, shared_journal, party_flags. Row Level Security keeps each player's private state visible only to them. The dice function is `roll_day1_check`.
+
+## Audio v0.2 (unchanged in v0.3)
 
 - Synchronized, original synthesized dice-tumble sound (~1.55 seconds).
 - Success / complication chimes after the die settles.
