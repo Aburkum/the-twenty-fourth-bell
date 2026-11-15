@@ -9,7 +9,7 @@ A fully self-contained static prototype of Paco’s Day 1 with added sound effec
 - Door-opening audio when entering Day 1 from the calendar.
 - Sound-effects enable/disable toggle. Preference persists across reloads.
 - Music cues automatically when Day 1 is opened (iOS Safari blocks true autoplay before a tap, so the door tap is the first gesture that starts it). Music on/off toggle persists across reloads; turning it off keeps music silent.
-- Original, synthesized **demo** Day 1 ambient loop (40s). **This is NOT a Suno track** and should be replaced with a Suno instrumental as soon as selected.
+- Day 1 ambient score, “A Town Without a Bell” (Suno, ~2:55, stereo), at `audio/day01_theme.mp3`. The synthesized demo loop remains at `audio/day01_theme_demo.mp3` as a fallback and is no longer referenced by the page.
 - Dice generation, outcomes and save system intentionally unchanged. No backend, multiplayer, analytics or permissions.
 
 ## Deploy with Donaar
@@ -20,9 +20,9 @@ A fully self-contained static prototype of Paco’s Day 1 with added sound effec
 4. Test that tapping Roll plays a 1.55-second dice rattle and the appropriate landing cue, and that no reroll is possible after refresh.
 5. Test the Effects and Music controls, browser refresh, page backgrounding, and audio on/off in Safari. Check that background music pauses when the tab is hidden and does not automatically play on loading.
 
-## Replacing the temporary background score
+## Day 1 background score
 
-Download a selected Suno instrumental MP3 and put it at `audio/day01_theme.mp3`. Edit `index.html`: change the audio `src` from `audio/day01_theme_demo.mp3` to `audio/day01_theme.mp3` and the `audioStatus` labels from 'Demo theme' to 'Day 1 · The Favor'. Keep the .mp3 under this same site's origin for reliable mobile playback.
+The Day 1 score is the Suno track “A Town Without a Bell” at `audio/day01_theme.mp3` (~2:55, stereo). The page references it from the `<audio>` element and labels it 'Day 1 · The Favor'. To swap in a different track, replace that file and keep the same filename; the page needs no code change. Keep the .mp3 under this same site's origin for reliable mobile playback. The synthesized demo loop is still in the repo at `audio/day01_theme_demo.mp3` as a fallback.
 
 ## Sound choices
 
