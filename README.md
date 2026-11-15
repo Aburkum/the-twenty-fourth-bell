@@ -1,29 +1,33 @@
-# The Twenty-Fourth Bell — hosted prototype
+# The Twenty-Fourth Bell — Audio v0.2 (GitHub Pages)
 
-This repository serves the original v0.1 mobile-friendly, single-file prototype of **The Twenty-Fourth Bell**, a private-family advent RPG concept.
+A fully self-contained static prototype of Paco’s Day 1 with added sound effects and music controls.
 
-## Deploy with GitHub Pages
+## What's new
 
-1. Put `index.html` at the root of the repository's default `main` branch. It is self-contained: no build step, npm dependencies, server, or database required.
-2. In the repository, open **Settings > Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**, branch **main**, folder **/(root)**, then **Save**.
-4. Wait for GitHub Pages to report successful deployment; use the actual **Visit site** URL rather than guessing.
-5. Test on a phone, including a persisted dice result after a page refresh.
+- Synchronized, original synthesized dice-tumble sound (~1.55 seconds).
+- Success / complication chimes after the die settles.
+- Door-opening audio when entering Day 1 from the calendar.
+- Sound-effects enable/disable toggle. Preference persists across reloads.
+- Explicit Play/Pause Music toggle that works with phone browser policies.
+- Original, synthesized **demo** Day 1 ambient loop (40s). **This is NOT a Suno track** and should be replaced with a Suno instrumental as soon as selected.
+- Dice generation, outcomes and save system intentionally unchanged. No backend, multiplayer, analytics or permissions.
 
-GitHub Pages requires a public repository for GitHub Free. A Pages site is publicly viewable even when published from a private repository on a plan that permits it. Do not commit credentials, private family data, hidden future narrative revelations, or API keys.
+## Deploy with Donaar
 
-## Included prototype behavior
+1. Treat this as a patch against the previous version of `The Twenty-Fourth Bell`, not as proof of the exact contents of the live GitHub repository. Compare first to avoid overwriting newer fixes.
+2. Replace the site's root `index.html` after reviewing differences, and add the `audio/` directory. Keep `.nojekyll` as already present.
+3. Commit, push to `main`, wait for the GitHub Pages deployment, then open the URL on an actual iPhone.
+4. Test that tapping Roll plays a 1.55-second dice rattle and the appropriate landing cue, and that no reroll is possible after refresh.
+5. Test the Effects and Music controls, browser refresh, page backgrounding, and audio on/off in Safari. Check that background music pauses when the tab is hidden and does not automatically play on loading.
 
-- 24-door calendar, with Day 1 of Paco's adventure playable.
-- Mobile navigation: Calendar, Story, Journal, Party; a character dossier.
-- Four Day 1 narrative choices. Three use player-initiated checks with a d20 animation; one resolves without rolling.
-- A single check result saved in browser `localStorage`, surviving refresh on that browser. Reset is available from the dossier.
-- A mock party page, not real multiplayer.
+## Replacing the temporary background score
 
-## Known v0.1 limitations
+Download a selected Suno instrumental MP3 and put it at `audio/day01_theme.mp3`. Edit `index.html`: change the audio `src` from `audio/day01_theme_demo.mp3` to `audio/day01_theme.mp3` and the `audioStatus` labels from 'Demo theme' to 'Day 1 · The Favor'. Keep the .mp3 under this same site's origin for reliable mobile playback.
 
-- No logins or cross-device sync; each browser saves its own state.
-- No real daily unlock scheduling or secure clue privacy; labels in the app are illustrative.
-- This is a static demonstration, not the eventual full four-player web app.
+## Sound choices
 
-Keep the game behavior and look intact while deploying. Report the repository URL, actual live Pages URL, published commit, and mobile test results to the project owner.
+Effect assets are original synthetic audio generated specifically for this prototype; no third-party sound libraries, credits, or license obligations. Effects never influence the dice result.
+
+## Future music design
+
+Build around one recurring motif, changing harmonic/color instrumentation every day. Avoid the full 24-track production investment until Day 1's music and audio mix are tested on all four family phones. Add user-controlled volume and per-day soundtrack selection when we expand the story beyond Day 1.
