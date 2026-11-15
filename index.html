@@ -258,6 +258,16 @@ $('rollButton').addEventListener('click',async ()=>{
 function shareButtonHtml(clueKey,clueText){
   return '<div class="share-row"><button class="secondary" id="shareClueBtn" data-key="'+clueKey+'" data-text="'+clueText.replace(/"/g,'&quot;')+'">Share discovery with party →</button></div><p class="hint" id="shareMsg" style="margin-top:8px"></p>';
 }
+// If this clue is already in the party journal (e.g. shared before a refresh),
+// show the button as already shared instead of offering to share again.
+async function refreshShareState(btn, clueKey, msgEl){
+  if(!btn||!party) return;
+  const {data:existing}=await sb.from('shared_journal').select('id').eq('party_id',party.id).eq('clue_key',clueKey).limit(1);
+  if(existing&&existing.length){
+    btn.disabled=true; btn.textContent='Shared ✓';
+    if(msgEl) msgEl.textContent='Shared to the party journal.';
+  }
+}
 function wireShareButton(){
   const b=$('shareClueBtn'); if(!b) return;
   b.addEventListener('click',async ()=>{
@@ -268,6 +278,7 @@ function wireShareButton(){
     if(ok){ b.disabled=true; b.textContent='Shared ✓'; }
     sharing=false;
   });
+  refreshShareState(b,b.dataset.key,$('shareMsg'));
 }
 async function shareClue(clueKey,clueText){
   if(!mySeat||!party) return false;
@@ -282,7 +293,7 @@ function renderOutcome(c,die){
   $('resolutionBody').innerHTML=html;$('resolution').classList.remove('hidden');wireShareButton();
 }
 // Placeholder (non-Rogue) discovery
-$('placeholderObserve').addEventListener('click',()=>{ $('placeholderResult').classList.remove('hidden'); });
+$('placeholderObserve').addEventListener('click',()=>{ $('placeholderResult').classList.remove('hidden'); refreshShareState($('placeholderShare'),'day1_belltower',$('placeholderShareMsg')); });
 $('placeholderShare').addEventListener('click',async ()=>{
   if(sharing) return; sharing=true;
   const msg=$('placeholderShareMsg'); msg.textContent='Sharing…';
