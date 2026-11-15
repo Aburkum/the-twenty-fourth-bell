@@ -32,7 +32,7 @@
 'use strict';
 const KEY='twenty-fourth-bell-proto-v1';
 const AUDIO_KEY='twenty-fourth-bell-audio-v02';
-let soundEnabled=true, musicEnabled=true, musicPlaying=false, musicError='';
+let soundEnabled=true, musicEnabled=true, musicPlaying=false, musicError='', musicPausedByHide=false;
 try{const ap=JSON.parse(localStorage.getItem(AUDIO_KEY)||'null');if(ap){if(typeof ap.effects==='boolean')soundEnabled=ap.effects;if(typeof ap.music==='boolean')musicEnabled=ap.music}}catch(_e){}
 const effectFiles={dice:'audio/dice_roll.mp3',door:'audio/door_open.mp3',success:'audio/roll_success.mp3',complication:'audio/roll_complication.mp3'};
 const soundEffects={};
@@ -42,11 +42,11 @@ function rememberAudio(){try{localStorage.setItem(AUDIO_KEY,JSON.stringify({effe
 function renderAudioButtons(){const s=document.getElementById('fxToggle'),m=document.getElementById('musicToggle'),st=document.getElementById('audioStatus');s.textContent=soundEnabled?'🔊 Effects on':'🔇 Effects off';s.setAttribute('aria-pressed',String(soundEnabled));m.textContent=musicEnabled?'♫ Music on':'♫ Music off';m.setAttribute('aria-pressed',String(musicEnabled));if(musicError)st.textContent=musicError;else if(!musicEnabled)st.textContent='Music off';else if(musicPlaying)st.textContent='Day 1 · The Favor';else st.textContent='Day 1 · The Favor · starts when you open Day 1'}
 function playEffect(which){if(!soundEnabled)return;const a=soundEffects[which];if(!a)return;try{a.pause();a.currentTime=0;a.volume=which==='dice'?.85:.65;const promise=a.play();if(promise&&promise.catch)promise.catch(()=>{})}catch(_e){}}
 function startMusic(){if(!musicEnabled||musicPlaying)return;const promise=music.play();if(promise&&promise.then)promise.then(()=>{musicError='';musicPlaying=true;renderAudioButtons()}).catch(()=>{musicError='Music unavailable or blocked';musicPlaying=false;renderAudioButtons()})}
-document.addEventListener('pointerdown',()=>{startMusic()});
+document.addEventListener('pointerdown',()=>{if(musicPausedByHide){musicPausedByHide=false;startMusic()}});
 document.getElementById('fxToggle').addEventListener('click',()=>{soundEnabled=!soundEnabled;rememberAudio();renderAudioButtons();if(soundEnabled)playEffect('door')});
 document.getElementById('musicToggle').addEventListener('click',()=>{musicEnabled=!musicEnabled;musicError='';rememberAudio();if(!musicEnabled){music.pause();musicPlaying=false;renderAudioButtons();return}startMusic();renderAudioButtons()});
 music.addEventListener('error',()=>{musicError='Music file could not load';musicPlaying=false;renderAudioButtons()});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&musicPlaying){music.pause();musicPlaying=false;renderAudioButtons()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&musicPlaying){music.pause();musicPlaying=false;musicPausedByHide=true;renderAudioButtons()}});
 renderAudioButtons();
 
 let state={choice:null,roll:null};
