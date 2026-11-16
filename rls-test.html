@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RLS Audit — Twenty-Fourth Bell</title>
+<style>body{font-family:monospace;max-width:720px;margin:20px auto;padding:0 16px;line-height:1.6}pre{background:#111;color:#0f0;padding:14px;border-radius:8px;white-space:pre-wrap;word-break:break-word}</style>
+</head>
+<body>
+<h1>RLS Audit — Twenty-Fourth Bell</h1>
+<p>Temporary audit page. Runs read tests as the signed-in user and reports row counts. Test 3 attempts one forbidden insert (expected to fail under RLS). Delete this file after the audit.</p>
+<pre id="out">Running…</pre>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function(){
+  const out = document.getElementById('out');
+  const lines = [];
+  const log = (...a)=>{ lines.push(a.map(x=>{ try{ return typeof x==='string'?x:JSON.stringify(x); }catch(e){ return String(x); } }).join(' ')); out.textContent = lines.join('\n'); };
+  try{
+    const sb2 = window.supabase.createClient('https://yfnwwdjxzxlvbtmynrrh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlmbnd3ZGp4enhsdmJ0bXlucnJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3NjM3MDIsImV4cCI6MjExMDMzOTcwMn0.MVlo1uieB9M3QReE6aCmWSJCZUW5vMufChC0WzAyyuc');
+    const PACO='40d563b1-c3fe-4bb9-958a-f7b107e0dab6', GREG='ac993ecf-8beb-4dea-ace9-c3bdc8d73867';
+    const sess = await sb2.auth.getSession();
+    log('session user:', sess.data.session ? sess.data.session.user.id : 'NONE');
+    const t1 = await sb2.from('player_state').select('*');
+    log('T1 player_state rows:', t1.data ? t1.data.length : 0, 'error:', t1.error ? t1.error.message : 'none', 'user_ids:', t1.data ? t1.data.map(r=>r.user_id) : []);
+    const t2 = await sb2.from('player_state').select('*').eq('user_id', GREG);
+    log('T2 Gregory player_state rows:', t2.data ? t2.data.length : 0, 'error:', t2.error ? t2.error.message : 'none');
+    const me = t1.data && t1.data[0];
+    let t3;
+    if(me){
+      t3 = await sb2.from('player_state').insert({user_id: GREG, player_id: me.player_id, party_id: me.party_id, day: 1, choice: 'bluff'});
+      log('T3 insert Gregory row — error:', t3.error ? (t3.error.message + ' code=' + t3.error.code) : 'NONE (insert succeeded!)', 'data:', t3.data);
+    } else {
+      log('T3 SKIPPED — no own player_state row to copy ids from');
+    }
+    const t4 = await sb2.from('shared_journal').select('*');
+    log('T4 shared_journal rows:', t4.data ? t4.data.length : 0, 'error:', t4.error ? t4.error.message : 'none');
+    const t5 = await sb2.from('players').select('*');
+    log('T5 players rows:', t5.data ? t5.data.length : 0, 'error:', t5.error ? t5.error.message : 'none', 'classes:', t5.data ? t5.data.map(r=>r.character_class+':'+r.character_name) : []);
+    log('DONE');
+  }catch(e){
+    log('FATAL:', e && e.message ? e.message : String(e));
+  }
+})();
+</script>
+</body>
+</html>
