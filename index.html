@@ -25,7 +25,7 @@
 <section id="choose" class="screen"><div class="eyebrow">Choose your adventurer</div><h1 class="heading">Who are you?</h1><p class="sub">Four seats, six classes. Pick one. Paco the Rogue already has a Day 1 story; the other classes are placeholders for now, with a small discovery to try.</p><div class="choices" id="classList"></div><p class="hint" id="chooseMessage" style="margin-top:12px" aria-live="polite"></p><div class="card"><div class="card-title">Your character name</div><input id="charName" type="text" autocomplete="off" maxlength="30" placeholder="e.g. Paco" style="width:100%;padding:12px;border-radius:10px;border:1px solid #657687;background:#122335;color:#eae8df;font-size:15px"><p class="hint" style="margin-top:8px">This is the name the party will see. Pick the class first, then type a name and confirm.</p><button class="primary" id="claimSeat" style="margin-top:12px" disabled>Claim this seat →</button></div><button class="secondary" id="signOutFromChoose" style="margin-top:12px">Sign out</button></section>
 <section id="calendar" class="screen active"><div class="eyebrow">Bellwether · December</div><h1 class="heading">Twenty-four doors.<br>One missing bell.</h1><p class="sub">A little mystery each day. A different perspective for every adventurer.</p><div class="hero" role="img" aria-label="Stylized snowy village at night with a clock tower"><span class="moon"></span><span class="hill"></span><div class="village"><div class="house"></div><div class="tower"></div><div class="house"></div><div class="house"></div></div><div class="hero-label">Every secret has its hour</div></div><div class="row" style="margin:0 0 12px"><strong style="font-family:Georgia,serif;font-size:19px">Your advent calendar</strong><span class="pill">1 of 24</span></div><div class="calendar" id="doors" aria-label="24 day advent calendar"></div><p class="fineprint">Audio v0.2: Day 1 score, “A Town Without a Bell”, with dedicated controls. Prototype mode: Day 1 is available early for testing. Other doors are locked mockups; a real app will use server-side release dates.</p><button class="primary" style="margin-top:16px" id="startStory">Open Day 1 · The Favor →</button></section>
 <section id="story" class="screen"><div class="row"><div class="eyebrow" id="storyEyebrow">December 1 · Paco's story</div><span class="pill">Day 1</span></div><h1 class="heading">The Favor</h1><div class="hero" role="img" aria-label="Bellwether snowy rooftops under the bell tower"><span class="moon"></span><span class="hill"></span><div class="village"><div class="house"></div><div class="tower"></div><div class="house"></div><div class="house"></div></div><div class="hero-label">A town without a bell</div></div><div id="placeholderStory" class="hidden"><div class="card"><div class="card-title">Day 1 · Placeholder</div><p class="hint">This class does not have a finished Day 1 story yet. This is a temporary placeholder so you can try the shared journal.</p><p class="story-copy" style="font-size:15px">You arrive in Bellwether as the light fades. The stone bell tower stands empty, yet every villager you ask insists they heard the bell ring this morning.</p><button class="secondary" id="placeholderObserve">Look closer at the tower</button><div id="placeholderResult" class="hidden" style="margin-top:12px"><div class="outcome-neutral"><strong>You notice something.</strong><p>The bell tower is empty, but the villagers clearly remember hearing it ring. Something does not add up.</p><p><strong>Discovery:</strong> The bell tower is empty, though villagers recall hearing it ring this morning.</p></div><div class="share-row"><button class="secondary" id="placeholderShare">Share discovery with party →</button></div><p class="hint" id="placeholderShareMsg" style="margin-top:8px"></p></div></div></div>
-<div id="intro" class="story-copy"><p>The first thing Paco notices about Bellwether is the silence.</p><p>Above the village square stands a stone tower with a great arched opening. Its bell is missing.</p><p>“What happened to your bell?” you ask a passing merchant.</p><p>“It rang this morning,” he replies, genuinely puzzled.</p><p>You unfold the letter from <em>Marta Wick</em>, the woman who once sheltered you from the watch. <em>Come before the first winter bell.</em></p><p>At Marta's shuttered lantern shop, a pale blue candle burns upstairs: her old signal that it isn't safe to approach openly.</p><p>Across the street a watchman in a green coat turns toward you. “You there! Have we met before?”</p></div><div id="decision"><div class="section-title">What does Paco do?</div><div class="choices"><button class="choice" data-choice="bluff"><strong>A. Bluff past the watchman</strong><small>Invent an identity. Deception +6. A check may follow.</small></button><button class="choice" data-choice="alley"><strong>B. Slip into the alley</strong><small>Approach Marta's shop unseen. Stealth +5.</small></button><button class="choice" data-choice="honest"><strong>C. Tell him your real name</strong><small>Take a social risk and learn why he's here.</small></button><button class="choice" data-choice="observe"><strong>D. Retreat and observe</strong><small>Study the scene and watch for a clue. Perception +1.</small></button></div><div class="hint" style="margin-top:11px">Choices permanently change Paco's record in this prototype. The full game would support alternate routes in later chapters.</div></div><div id="check" class="hidden"><div class="card"><div class="row"><strong id="checkName">Deception check</strong><span class="pill" id="checkDC">DC 13</span></div><p class="hint" id="checkStakes"></p><div class="roll-stage"><div class="die-wrap"><div class="die" id="die"><svg viewBox="0 0 140 150" role="img" aria-label="Animated twenty-sided die"><path d="M70 5 L131 45 L112 121 L70 145 L28 121 L9 45 Z" fill="#143a55" stroke="#e4bd77" stroke-width="3"/><path d="M70 5 L70 38 L9 45 M70 38 L131 45 M70 38 L28 121 L70 145 L112 121 Z M70 38 L112 121 M9 45 L28 121 M131 45 L112 121" fill="none" stroke="#d2ae6c" stroke-width="2"/><path d="M70 38 L28 121 L112 121 Z" fill="#265a73" stroke="#f0cd8d" stroke-width="2"/><text id="dieValue" x="70" y="91" class="die-number">20</text></svg></div></div><div class="row" style="max-width:230px;margin:4px auto 12px"><span>Modifier <b id="checkMod">+6</b></span><span>Target <b id="checkTarget">13</b></span></div><div id="rollMessage" class="hint" aria-live="polite">When you're ready, tap the button to roll.</div></div><button id="rollButton" class="primary">🎲 Roll the d20</button></div></div><div id="resolution" class="hidden"><div id="resolutionBody" class="outcome-panel"></div><div class="card"><strong>📖 Journal updated</strong><p class="hint">Your new information is now in Paco's private journal. Open it below.</p><button class="secondary" id="toJournal">View my journal →</button></div></div></section>
+<div id="intro" class="story-copy"></div><div id="decision"><div class="section-title">What do you do?</div><div class="choices" id="choiceList"></div><div class="hint" style="margin-top:11px">Choices permanently change your record. The full game supports alternate routes in later chapters.</div></div><div id="check" class="hidden"><div class="card"><div class="row"><strong id="checkName">Deception check</strong><span class="pill" id="checkDC">DC 13</span></div><p class="hint" id="checkStakes"></p><div class="roll-stage"><div class="die-wrap"><div class="die" id="die"><svg viewBox="0 0 140 150" role="img" aria-label="Animated twenty-sided die"><path d="M70 5 L131 45 L112 121 L70 145 L28 121 L9 45 Z" fill="#143a55" stroke="#e4bd77" stroke-width="3"/><path d="M70 5 L70 38 L9 45 M70 38 L131 45 M70 38 L28 121 L70 145 L112 121 Z M70 38 L112 121 M9 45 L28 121 M131 45 L112 121" fill="none" stroke="#d2ae6c" stroke-width="2"/><path d="M70 38 L28 121 L112 121 Z" fill="#265a73" stroke="#f0cd8d" stroke-width="2"/><text id="dieValue" x="70" y="91" class="die-number">20</text></svg></div></div><div class="row" style="max-width:230px;margin:4px auto 12px"><span>Modifier <b id="checkMod">+6</b></span><span>Target <b id="checkTarget">13</b></span></div><div id="rollMessage" class="hint" aria-live="polite">When you're ready, tap the button to roll.</div></div><button id="rollButton" class="primary">🎲 Roll the d20</button></div></div><div id="resolution" class="hidden"><div id="resolutionBody" class="outcome-panel"></div><div class="card"><strong>📖 Journal updated</strong><p class="hint">Your new information is now in Paco's private journal. Open it below.</p><button class="secondary" id="toJournal">View my journal →</button></div></div></section>
 <section id="journal" class="screen"><div class="eyebrow" id="journalEyebrow">Paco · Private discoveries</div><h1 class="heading">Your journal</h1><p class="sub" id="journalSub">Only Paco can see these entries until he chooses to share them.</p><div class="card" id="pacoQuestCard"><div class="card-title">Personal quest · The debt</div><div class="quest">Marta Wick sheltered Paco from the watch two years ago. She has called in the favor he promised her. <strong>Find Marta and learn why she needs help.</strong></div><div class="section-title">The secret you carry</div><div class="quest">You once betrayed your companion Renn by revealing their hiding place to the watch. You don't know what happened to Renn afterward. The party does not know this.</div></div><div class="section-title">Discoveries</div><div class="entry"><div class="glyph">✉</div><div><strong>Marta's letter</strong><p>“The time has come. Come before the first winter bell.”</p></div></div><div class="entry"><div class="glyph">🕯</div><div><strong>The blue-flame signal</strong><p>Marta is warning you it is unsafe to approach her shop openly.</p></div></div><div id="journalResult"></div><div class="info">Sharing is deliberate. In the eventual multiplayer app, a private discovery won't automatically appear in your family's shared journal.</div></section>
 <section id="party" class="screen"><div class="eyebrow">Shared adventure</div><h1 class="heading">The party</h1><p class="sub">Four adventurers, each uncovering a different piece of the same mystery.</p><div class="slots" id="partySlots"></div><div class="section-title">Shared world</div><div class="card"><div class="kv"><span>Village</span><span>Bellwether</span></div><div class="kv"><span>Bell tower</span><span>Empty</span></div><div class="kv"><span>Party clues shared</span><span id="sharedCount">0</span></div><div class="kv"><span>Chapter</span><span>Day 1</span></div></div><div class="section-title">Shared journal</div><div id="sharedJournalList"><div class="hint">Nothing shared yet. When someone shares a discovery, it appears here for the whole party.</div></div><div class="info">Only clues a player chooses to share appear here. Private journals stay private.</div></section>
 <section id="profile" class="screen"><div class="eyebrow">Character dossier</div><h1 class="heading">Paco, the Shadow</h1><p class="sub">Level 1 Halfling Rogue · Trickster focus · Criminal background</p><div id="profilePlaceholder" class="card hidden"><p class="hint">This class does not have a finished dossier yet. Stats, skills, and character choices are still being written.</p></div><div class="card" id="profileHpCard"><div class="row"><div><strong>HP 9</strong><div class="hint">Hit Points</div></div><div><strong>AC 14</strong><div class="hint">Armor Class</div></div><div><strong>+5</strong><div class="hint">Initiative</div></div><div><strong>30 ft.</strong><div class="hint">Speed</div></div></div></div><div class="stats" id="profileStats"><div class="stat"><div class="key">STR</div><div class="num">−1</div><div class="base">8</div></div><div class="stat"><div class="key">DEX</div><div class="num">+3</div><div class="base">16</div></div><div class="stat"><div class="key">CON</div><div class="num">+1</div><div class="base">13</div></div><div class="stat"><div class="key">INT</div><div class="num">+0</div><div class="base">11</div></div><div class="stat"><div class="key">WIS</div><div class="num">+1</div><div class="base">12</div></div><div class="stat"><div class="key">CHA</div><div class="num">+2</div><div class="base">15</div></div></div><div class="section-title" id="profileSkillsTitle">Favored skills</div><div class="card" id="profileSkillsCard"><div class="kv"><span>Deception · Expertise</span><span>+6</span></div><div class="kv"><span>Persuasion · Expertise</span><span>+6</span></div><div class="kv"><span>Stealth</span><span>+5</span></div><div class="kv"><span>Sleight of Hand</span><span>+5</span></div><div class="kv"><span>Insight</span><span>+3</span></div><div class="kv"><span>Investigation</span><span>+2</span></div><div class="kv"><span>Perception</span><span>+1</span></div></div><div class="section-title" id="profileChoicesTitle">Character choices</div><div class="card" id="profileChoicesCard"><div class="kv"><span>Motivation</span><span>Debt to Marta</span></div><div class="kv"><span>Secret</span><span>Betrayed Renn</span></div><div class="kv"><span>Specialty</span><span>Trickster</span></div></div><button id="reset" class="secondary">Reset prototype story</button><p class="fineprint">Reset clears only this browser's demonstration state. It doesn't affect any account or server.</p></section>
@@ -76,6 +76,52 @@ const CLASSES=[
  {key:'Ranger',name:'Ranger',desc:'Placeholder. A tracker of the winter woods. Day 1 story coming later.'},
  {key:'Bard',name:'Bard',desc:'Placeholder. A singer of half-remembered songs. Day 1 story coming later.'}];
 const PLACEHOLDER_CLUE='The bell tower is empty, though villagers recall hearing it ring this morning.';
+
+// ---------- Backend-served chapters (v0.4) ----------
+// Day 1 content comes from the server (get_chapter RPC), not from hardcoded
+// text. The hardcoded `config` above is the fallback for Rogue if the fetch
+// fails. chapterData holds the fetched manifest for the player's class;
+// chapterConfig is the choice lookup built from it, keyed by short choice
+// key ('bluff', 'alley', 'honest', 'observe').
+let chapterData=null, chapterConfig=null;
+function shortKey(id){
+  const parts=String(id||'').split('_');
+  return parts.length?parts[parts.length-1]:id;
+}
+function buildChapterConfig(content){
+  const cfg={};
+  (content.choices||[]).forEach(ch=>{
+    const key=shortKey(ch.id);
+    cfg[key]={
+      name: ch.skill||'',
+      mod: ch.modifier||0,
+      dc: ch.dc||10,
+      stakes: ch.stakes||'',
+      success: ch.success_text||'',
+      failure: ch.complication_text||'',
+      clue: ch.clue?ch.clue.text:'',
+      flag: ''
+    };
+  });
+  return cfg;
+}
+async function loadChapter(){
+  if(!sb||!mySeat) return false;
+  try{
+    const {data,error}=await sb.rpc('get_chapter',{p_day:1});
+    if(error||!data||!data.content){ chapterData=null; chapterConfig=null; return false; }
+    chapterData=data;
+    chapterConfig=buildChapterConfig(data.content);
+    return true;
+  }catch(_e){ chapterData=null; chapterConfig=null; return false; }
+}
+function activeConfig(){
+  return chapterConfig||config;
+}
+function honestClueText(){
+  if(chapterConfig&&chapterConfig.honest) return chapterConfig.honest.clue;
+  return HONEST_CLUE;
+}
 
 // ---------- App state (v0.3) ----------
 const $=id=>document.getElementById(id);
@@ -154,6 +200,7 @@ async function bootAfterSignIn(){
   renderIdentity();
   if(!mySeat){ await renderChoose(); show('choose'); return; }
   await loadServerState();
+  await loadChapter();
   show('calendar');
 }
 async function renderChoose(){
@@ -196,6 +243,7 @@ $('claimSeat').addEventListener('click',async ()=>{
   mySeat=data;
   renderIdentity();
   await loadServerState();
+  await loadChapter();
   show('calendar');
 });
 
@@ -213,9 +261,10 @@ async function loadServerState(){
   // as placeholders; never copy Paco's local roll into another character.
   const localChoice=state.choice, localRoll=state.roll;
   if(localChoice && isRogue()){
-    const clue = localChoice==='honest' ? HONEST_CLUE : (config[localChoice]?config[localChoice].clue:null);
-    const total = (localChoice!=='honest' && localRoll!==null) ? localRoll + config[localChoice].mod : null;
-    const outcome = (localChoice!=='honest' && total!==null) ? (total>=config[localChoice].dc?'success':'complication') : null;
+    const cfg=activeConfig();
+    const clue = localChoice==='honest' ? honestClueText() : (cfg[localChoice]?cfg[localChoice].clue:null);
+    const total = (localChoice!=='honest' && localRoll!==null) ? localRoll + cfg[localChoice].mod : null;
+    const outcome = (localChoice!=='honest' && total!==null) ? (total>=cfg[localChoice].dc?'success':'complication') : null;
     const {error}=await sb.from('player_state').insert({player_id:mySeat.id,user_id:session.user.id,party_id:party.id,day:1,choice:localChoice,roll:localRoll,roll_total:total,outcome:outcome,clue:clue});
     if(!error){ saveLocal(); return; }
     // If the insert failed (e.g. a row was created meanwhile), reload from the server.
@@ -226,7 +275,7 @@ async function loadServerState(){
   saveLocal();
 }
 async function saveHonestChoice(){
-  const {error}=await sb.from('player_state').upsert({player_id:mySeat.id,user_id:session.user.id,party_id:party.id,day:1,choice:'honest',roll:null,roll_total:null,outcome:null,clue:HONEST_CLUE},{onConflict:'player_id,day'});
+  const {error}=await sb.from('player_state').upsert({player_id:mySeat.id,user_id:session.user.id,party_id:party.id,day:1,choice:'honest',roll:null,roll_total:null,outcome:null,clue:honestClueText()},{onConflict:'player_id,day'});
   if(error){ $('rollMessage').textContent='Could not save your choice. Please try again.'; return false; }
   state={choice:'honest',roll:null};
   saveLocal();
@@ -240,8 +289,53 @@ function setChoice(choice){
   if(choice==='honest'){ saveHonestChoice().then(ok=>{ if(ok) renderStory(); }); return; }
   state.choice=choice; saveLocal(); renderStory();
 }
-document.querySelectorAll('[data-choice]').forEach(b=>b.addEventListener('click',()=>setChoice(b.dataset.choice)));
 function signed(n){return n>=0?'+'+n:String(n)}
+function renderIntroAndChoices(){
+  const intro=$('intro'), list=$('choiceList');
+  if(!intro||!list) return;
+  const content = chapterData && chapterData.content ? chapterData.content : null;
+  if(content && content.opening && content.opening.text){
+    const paras=String(content.opening.text).split(/\n\s*\n/);
+    intro.innerHTML=paras.map(p=>'<p>'+escapeHtml(p.trim())+'</p>').join('');
+  } else {
+    // Fallback: the v0.3 Rogue opening (used if the server fetch failed).
+    intro.innerHTML='<p>The first thing you notice about Bellwether is the silence.</p><p>Above the village square stands a stone tower with a great arched opening. Its bell is missing.</p><p>“What happened to your bell?” you ask a passing merchant.</p><p>“It rang this morning,” he replies, genuinely puzzled.</p><p>You unfold the letter from <em>Marta Wick</em>, the woman who once sheltered you from the watch. <em>Come before the first winter bell.</em></p><p>At Marta’s shuttered lantern shop, a pale blue candle burns upstairs: her old signal that it isn’t safe to approach openly.</p><p>Across the street a watchman in a green coat turns toward you. “You there! Have we met before?”</p>';
+  }
+  const choices = content && content.choices ? content.choices : null;
+  list.innerHTML='';
+  if(choices && choices.length){
+    const letters=['A','B','C','D','E','F'];
+    choices.forEach((ch,i)=>{
+      const key=shortKey(ch.id);
+      const b=document.createElement('button');
+      b.type='button'; b.className='choice'; b.dataset.choice=key;
+      let small=ch.description||'';
+      if(ch.kind==='check' && ch.skill){ small+=' '+ch.skill+' +'+(ch.modifier||0)+'.'; }
+      b.innerHTML='<strong>'+letters[i]+'. '+escapeHtml(ch.label||key)+'</strong><small>'+escapeHtml(small)+'</small>';
+      b.addEventListener('click',()=>setChoice(key));
+      list.appendChild(b);
+    });
+  } else {
+    // Fallback: the v0.3 Rogue choices.
+    const fallback=[
+      {key:'bluff',label:'Bluff past the watchman',desc:'Invent an identity. Deception +6. A check may follow.'},
+      {key:'alley',label:'Slip into the alley',desc:'Approach Marta’s shop unseen. Stealth +5.'},
+      {key:'honest',label:'Tell him your real name',desc:'Take a social risk and learn why he’s here.'},
+      {key:'observe',label:'Retreat and observe',desc:'Study the scene and watch for a clue. Perception +1.'}
+    ];
+    const letters=['A','B','C','D'];
+    fallback.forEach((ch,i)=>{
+      const b=document.createElement('button');
+      b.type='button'; b.className='choice'; b.dataset.choice=ch.key;
+      b.innerHTML='<strong>'+letters[i]+'. '+escapeHtml(ch.label)+'</strong><small>'+escapeHtml(ch.desc)+'</small>';
+      b.addEventListener('click',()=>setChoice(ch.key));
+      list.appendChild(b);
+    });
+  }
+}
+function escapeHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 function renderStory(){
   const intro=$('intro'), decision=$('decision'), check=$('check'), res=$('resolution'), ph=$('placeholderStory');
   const seb=$('storyEyebrow');
@@ -252,10 +346,11 @@ function renderStory(){
     return;
   }
   ph.classList.add('hidden'); intro.classList.remove('hidden');
+  renderIntroAndChoices();
   decision.classList.toggle('hidden',!!state.choice);check.classList.add('hidden');res.classList.add('hidden');
   if(!state.choice)return;
-  if(state.choice==='honest'){$('resolutionBody').innerHTML='<div class="outcome-neutral"><strong>You choose honesty.</strong><p>“Paco,” you answer. “I’m a friend of Marta Wick.” The watchman’s shoulders stiffen. “Then we need to talk. She has been missing since yesterday.” His eyes narrow. “And you are the first person to come looking for her.”</p><p><strong>Consequence:</strong> The watch knows your identity, but you have learned Marta is missing without needing to roll.</p></div>'+shareButtonHtml('day1_honest',HONEST_CLUE);$('resolution').classList.remove('hidden');wireShareButton();return}
-  const c=config[state.choice];$('checkName').textContent=c.name+' check';$('checkDC').textContent='DC '+c.dc;$('checkMod').textContent=signed(c.mod);$('checkTarget').textContent=String(c.dc);$('checkStakes').textContent=c.stakes;
+  if(state.choice==='honest'){$('resolutionBody').innerHTML='<div class="outcome-neutral"><strong>You choose honesty.</strong><p>“Paco,” you answer. “I’m a friend of Marta Wick.” The watchman’s shoulders stiffen. “Then we need to talk. She has been missing since yesterday.” His eyes narrow. “And you are the first person to come looking for her.”</p><p><strong>Consequence:</strong> The watch knows your identity, but you have learned Marta is missing without needing to roll.</p></div>'+shareButtonHtml('day1_honest',honestClueText());$('resolution').classList.remove('hidden');wireShareButton();return}
+  const c=activeConfig()[state.choice];$('checkName').textContent=c.name+' check';$('checkDC').textContent='DC '+c.dc;$('checkMod').textContent=signed(c.mod);$('checkTarget').textContent=String(c.dc);$('checkStakes').textContent=c.stakes;
   if(state.roll===null){$('check').classList.remove('hidden');$('dieValue').textContent='20';$('rollButton').disabled=false;$('rollButton').textContent='🎲 Roll the d20';$('rollMessage').textContent='Tap to roll. A single result will be saved for this decision.'}
   else{renderOutcome(c,state.roll)}
 }
@@ -272,7 +367,7 @@ $('rollButton').addEventListener('click',async ()=>{
   state.roll=result; saveLocal();
   const die=$('die');die.classList.remove('rolling');void die.offsetWidth;die.classList.add('rolling');
   const interval=setInterval(()=>$('dieValue').textContent=String(Math.floor(Math.random()*20)+1),75);
-  setTimeout(()=>{clearInterval(interval);die.classList.remove('rolling');$('dieValue').textContent=String(result);$('rollMessage').textContent='Natural '+result+'!';playEffect(result+config[state.choice].mod>=config[state.choice].dc?'success':'complication');rolling=false;setTimeout(()=>renderStory(),480)},1550);
+  setTimeout(()=>{clearInterval(interval);die.classList.remove('rolling');$('dieValue').textContent=String(result);$('rollMessage').textContent='Natural '+result+'!';playEffect(result+activeConfig()[state.choice].mod>=activeConfig()[state.choice].dc?'success':'complication');rolling=false;setTimeout(()=>renderStory(),480)},1550);
 });
 function shareButtonHtml(clueKey,clueText){
   return '<div class="share-row"><button class="secondary" id="shareClueBtn" data-key="'+clueKey+'" data-text="'+clueText.replace(/"/g,'&quot;')+'">Share discovery with party →</button></div><p class="hint" id="shareMsg" style="margin-top:8px"></p>';
@@ -338,7 +433,7 @@ function renderJournal(){
   if(sb) sb.textContent='Only Paco can see these entries until he chooses to share them.';
   if(!state.choice){target.innerHTML='<div class="hint">More entries will appear as Paco makes discoveries.</div>';return}
   if(state.choice==='honest'){target.innerHTML='<div class="entry"><div class="glyph">🛡</div><div><strong>The watch knows Paco</strong><p>The watchman says Marta went missing yesterday. You gave him your real name.</p></div></div>';return}
-  const c=config[state.choice],pass=state.roll!==null&&state.roll+c.mod>=c.dc;
+  const c=activeConfig()[state.choice],pass=state.roll!==null&&state.roll+c.mod>=c.dc;
   if(state.roll===null){target.innerHTML='<div class="hint">A '+c.name+' check is waiting in your story.</div>';return}
   target.innerHTML='<div class="entry"><div class="glyph">🔎</div><div><strong>Day 1 · '+c.name+' '+(pass?'success':'complication')+'</strong><p>'+c.clue+'</p><p>Rolled '+state.roll+' '+signed(c.mod)+' = '+(state.roll+c.mod)+' against DC '+c.dc+'.</p></div></div>'
 }
