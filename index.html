@@ -27,7 +27,7 @@
 <section id="story" class="screen"><div class="row"><div class="eyebrow" id="storyEyebrow">December 1 · Paco's story</div><span class="pill">Day 1</span></div><h1 class="heading">The Favor</h1><div class="hero" role="img" aria-label="Bellwether snowy rooftops under the bell tower"><span class="moon"></span><span class="hill"></span><div class="village"><div class="house"></div><div class="tower"></div><div class="house"></div><div class="house"></div></div><div class="hero-label">A town without a bell</div></div><div id="placeholderStory" class="hidden"><div class="card"><div class="card-title">Day 1 · Placeholder</div><p class="hint">This class does not have a finished Day 1 story yet. This is a temporary placeholder so you can try the shared journal.</p><p class="story-copy" style="font-size:15px">You arrive in Bellwether as the light fades. The stone bell tower stands empty, yet every villager you ask insists they heard the bell ring this morning.</p><button class="secondary" id="placeholderObserve">Look closer at the tower</button><div id="placeholderResult" class="hidden" style="margin-top:12px"><div class="outcome-neutral"><strong>You notice something.</strong><p>The bell tower is empty, but the villagers clearly remember hearing it ring. Something does not add up.</p><p><strong>Discovery:</strong> The bell tower is empty, though villagers recall hearing it ring this morning.</p></div><div class="share-row"><button class="secondary" id="placeholderShare">Share discovery with party →</button></div><p class="hint" id="placeholderShareMsg" style="margin-top:8px"></p></div></div></div>
 <div id="intro" class="story-copy"></div><div id="decision"><div class="section-title">What do you do?</div><div class="choices" id="choiceList"></div><div class="hint" style="margin-top:11px">Choices permanently change your record. The full game supports alternate routes in later chapters.</div></div><div id="check" class="hidden"><div class="card"><div class="row"><strong id="checkName">Deception check</strong><span class="pill" id="checkDC">DC 13</span></div><p class="hint" id="checkStakes"></p><div class="roll-stage"><div class="die-wrap"><div class="die" id="die"><svg viewBox="0 0 140 150" role="img" aria-label="Animated twenty-sided die"><path d="M70 5 L131 45 L112 121 L70 145 L28 121 L9 45 Z" fill="#143a55" stroke="#e4bd77" stroke-width="3"/><path d="M70 5 L70 38 L9 45 M70 38 L131 45 M70 38 L28 121 L70 145 L112 121 Z M70 38 L112 121 M9 45 L28 121 M131 45 L112 121" fill="none" stroke="#d2ae6c" stroke-width="2"/><path d="M70 38 L28 121 L112 121 Z" fill="#265a73" stroke="#f0cd8d" stroke-width="2"/><text id="dieValue" x="70" y="91" class="die-number">20</text></svg></div></div><div class="row" style="max-width:230px;margin:4px auto 12px"><span>Modifier <b id="checkMod">+6</b></span><span>Target <b id="checkTarget">13</b></span></div><div id="rollMessage" class="hint" aria-live="polite">When you're ready, tap the button to roll.</div></div><button id="rollButton" class="primary">🎲 Roll the d20</button></div></div><div id="resolution" class="hidden"><div id="resolutionBody" class="outcome-panel"></div><div class="card"><strong>📖 Journal updated</strong><p class="hint">Your new information is now in Paco's private journal. Open it below.</p><button class="secondary" id="toJournal">View my journal →</button></div></div></section>
 <section id="journal" class="screen"><div class="eyebrow" id="journalEyebrow">Paco · Private discoveries</div><h1 class="heading">Your journal</h1><p class="sub" id="journalSub">Only Paco can see these entries until he chooses to share them.</p><div class="card" id="pacoQuestCard"><div class="card-title">Personal quest · The debt</div><div class="quest">Marta Wick sheltered Paco from the watch two years ago. She has called in the favor he promised her. <strong>Find Marta and learn why she needs help.</strong></div><div class="section-title">The secret you carry</div><div class="quest">You once betrayed your companion Renn by revealing their hiding place to the watch. You don't know what happened to Renn afterward. The party does not know this.</div></div><div class="section-title">Discoveries</div><div class="entry"><div class="glyph">✉</div><div><strong>Marta's letter</strong><p>“The time has come. Come before the first winter bell.”</p></div></div><div class="entry"><div class="glyph">🕯</div><div><strong>The blue-flame signal</strong><p>Marta is warning you it is unsafe to approach her shop openly.</p></div></div><div id="journalResult"></div><div class="info">Sharing is deliberate. In the eventual multiplayer app, a private discovery won't automatically appear in your family's shared journal.</div></section>
-<section id="party" class="screen"><div class="eyebrow">Shared adventure</div><h1 class="heading">The party</h1><p class="sub">Four adventurers, each uncovering a different piece of the same mystery.</p><div class="slots" id="partySlots"></div><div class="section-title">Shared world</div><div class="card"><div class="kv"><span>Village</span><span>Bellwether</span></div><div class="kv"><span>Bell tower</span><span>Empty</span></div><div class="kv"><span>Party clues shared</span><span id="sharedCount">0</span></div><div class="kv"><span>Chapter</span><span>Day 1</span></div></div><div class="section-title">Shared journal</div><div id="sharedJournalList"><div class="hint">Nothing shared yet. When someone shares a discovery, it appears here for the whole party.</div></div><div class="info">Only clues a player chooses to share appear here. Private journals stay private.</div></section>
+<section id="party" class="screen"><div class="eyebrow">Shared adventure</div><h1 class="heading">The party</h1><p class="sub">Four adventurers, each uncovering a different piece of the same mystery.</p><div class="slots" id="partySlots"></div><div class="section-title">Shared world</div><div class="card"><div class="kv"><span>Village</span><span>Bellwether</span></div><div class="kv"><span>Bell tower</span><span>Empty</span></div><div class="kv"><span>Party clues shared</span><span id="sharedCount">0</span></div><div class="kv"><span>Chapter</span><span>Day 1</span></div></div><div class="section-title">Marta's Lantern Cipher</div><div class="card" id="lanternCard"><div class="card-title">The four-symbol dial</div><p class="hint" id="lanternHint">Each adventurer carries one private clue fragment. Combine the four fragments to find the order, then turn the dial. The dial accepts four symbols: FLAME, BELL, KEY, SNOW.</p><div id="lanternSolved" class="hidden"><div class="outcome-good"><strong>✓ The lantern is lit.</strong><p>The dial turns, the lantern flares, and a warm light spills across Bellwether. Something in the village has changed.</p></div></div><div id="lanternPuzzle"><div class="row" style="gap:8px;flex-wrap:wrap" id="lanternSlots"></div><div class="choices" style="margin-top:12px" id="lanternSymbols"></div><button class="primary" id="lanternTry" style="margin-top:12px" disabled>Try this order →</button><p class="hint" id="lanternMsg" style="margin-top:8px" aria-live="polite"></p></div></div><div class="section-title">Shared journal</div><div id="sharedJournalList"><div class="hint">Nothing shared yet. When someone shares a discovery, it appears here for the whole party.</div></div><div class="info">Only clues a player chooses to share appear here. Private journals stay private.</div></section>
 <section id="profile" class="screen"><div class="eyebrow">Character dossier</div><h1 class="heading">Paco, the Shadow</h1><p class="sub">Level 1 Halfling Rogue · Trickster focus · Criminal background</p><div id="profilePlaceholder" class="card hidden"><p class="hint">This class does not have a finished dossier yet. Stats, skills, and character choices are still being written.</p></div><div class="card" id="profileHpCard"><div class="row"><div><strong>HP 9</strong><div class="hint">Hit Points</div></div><div><strong>AC 14</strong><div class="hint">Armor Class</div></div><div><strong>+5</strong><div class="hint">Initiative</div></div><div><strong>30 ft.</strong><div class="hint">Speed</div></div></div></div><div class="stats" id="profileStats"><div class="stat"><div class="key">STR</div><div class="num">−1</div><div class="base">8</div></div><div class="stat"><div class="key">DEX</div><div class="num">+3</div><div class="base">16</div></div><div class="stat"><div class="key">CON</div><div class="num">+1</div><div class="base">13</div></div><div class="stat"><div class="key">INT</div><div class="num">+0</div><div class="base">11</div></div><div class="stat"><div class="key">WIS</div><div class="num">+1</div><div class="base">12</div></div><div class="stat"><div class="key">CHA</div><div class="num">+2</div><div class="base">15</div></div></div><div class="section-title" id="profileSkillsTitle">Favored skills</div><div class="card" id="profileSkillsCard"><div class="kv"><span>Deception · Expertise</span><span>+6</span></div><div class="kv"><span>Persuasion · Expertise</span><span>+6</span></div><div class="kv"><span>Stealth</span><span>+5</span></div><div class="kv"><span>Sleight of Hand</span><span>+5</span></div><div class="kv"><span>Insight</span><span>+3</span></div><div class="kv"><span>Investigation</span><span>+2</span></div><div class="kv"><span>Perception</span><span>+1</span></div></div><div class="section-title" id="profileChoicesTitle">Character choices</div><div class="card" id="profileChoicesCard"><div class="kv"><span>Motivation</span><span>Debt to Marta</span></div><div class="kv"><span>Secret</span><span>Betrayed Renn</span></div><div class="kv"><span>Specialty</span><span>Trickster</span></div></div><button id="reset" class="secondary">Reset prototype story</button><p class="fineprint">Reset clears only this browser's demonstration state. It doesn't affect any account or server.</p></section>
 </main>
 <nav class="footer" aria-label="Primary navigation"><button class="tab active" data-tab="calendar"><span class="ico">▦</span>Calendar</button><button class="tab" data-tab="story"><span class="ico">✧</span>Story</button><button class="tab" data-tab="journal"><span class="ico">▤</span>Journal</button><button class="tab" data-tab="party"><span class="ico">♧</span>Party</button></nav>
@@ -487,7 +487,79 @@ async function renderParty(){
       });
     }
   }
+  renderLantern();
 }
+
+// ---------- Lantern Cipher (v0.4) ----------
+const LANTERN_SYMBOLS=['FLAME','BELL','KEY','SNOW'];
+let lanternSequence=[];
+async function isLanternSolved(){
+  if(!party) return false;
+  const {data}=await sb.from('party_flags').select('flag_value').eq('party_id',party.id).eq('flag_key','lantern_cipher_solved').limit(1);
+  return !!(data&&data.length&&(data[0].flag_value&&data[0].flag_value.solved===true));
+}
+function renderLanternSlots(){
+  const slots=$('lanternSlots'); if(!slots) return;
+  slots.innerHTML='';
+  for(let i=0;i<4;i++){
+    const s=document.createElement('span');
+    s.className='pill';
+    s.style.cssText='padding:10px 12px;font-size:12px;min-width:64px;text-align:center';
+    s.textContent=lanternSequence[i]||('— '+(i+1)+' —');
+    slots.appendChild(s);
+  }
+  const tryBtn=$('lanternTry');
+  if(tryBtn) tryBtn.disabled = lanternSequence.length!==4;
+}
+function renderLanternSymbols(){
+  const wrap=$('lanternSymbols'); if(!wrap) return;
+  wrap.innerHTML='';
+  LANTERN_SYMBOLS.forEach(sym=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='choice';
+    b.disabled = lanternSequence.includes(sym);
+    b.innerHTML='<strong>'+sym+'</strong>';
+    b.addEventListener('click',()=>{
+      if(lanternSequence.length<4 && !lanternSequence.includes(sym)){
+        lanternSequence.push(sym);
+        renderLanternSlots(); renderLanternSymbols();
+      }
+    });
+    wrap.appendChild(b);
+  });
+  const clear=document.createElement('button');
+  clear.type='button'; clear.className='secondary'; clear.textContent='Clear';
+  clear.addEventListener('click',()=>{ lanternSequence=[]; renderLanternSlots(); renderLanternSymbols(); const m=$('lanternMsg'); if(m) m.textContent=''; });
+  wrap.appendChild(clear);
+}
+async function renderLantern(){
+  const solved=await isLanternSolved();
+  const solvedEl=$('lanternSolved'), puzzleEl=$('lanternPuzzle');
+  if(solvedEl) solvedEl.classList.toggle('hidden',!solved);
+  if(puzzleEl) puzzleEl.classList.toggle('hidden',solved);
+  if(!solved){ lanternSequence=[]; renderLanternSlots(); renderLanternSymbols(); }
+}
+$('lanternTry').addEventListener('click',async ()=>{
+  if(lanternSequence.length!==4) return;
+  const msg=$('lanternMsg'); const btn=$('lanternTry');
+  btn.disabled=true; msg.textContent='Turning the dial…';
+  try{
+    const {data,error}=await sb.rpc('solve_lantern_cipher',{p_sequence:lanternSequence});
+    if(error||!data){ msg.textContent='Could not reach the dial. Please try again.'; btn.disabled=false; return; }
+    if(data.solved){
+      msg.textContent='';
+      await renderLantern();
+      await renderParty();
+    } else {
+      msg.textContent=data.reason||'That order does not open the lantern.';
+      lanternSequence=[];
+      renderLanternSlots(); renderLanternSymbols();
+    }
+  }catch(_e){
+    msg.textContent='Could not reach the dial. Please try again.';
+    btn.disabled=false;
+  }
+});
 
 // ---------- Reset (host/test) ----------
 $('reset').addEventListener('click',async ()=>{
