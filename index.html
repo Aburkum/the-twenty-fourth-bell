@@ -517,6 +517,11 @@ async function renderParty(){
 const ARCHIVE_STATIONS={A:{glyph:'♨',name:'Flame'},B:{glyph:'♬',name:'Bell'},C:{glyph:'⚿',name:'Key'},D:{glyph:'❄',name:'Snow'}};
 let archiveRoom=null;
 let bellSeq=[];
+let groupSel={};
+let snowSel=null;
+let revealedInspect={};
+let ownSeatKey=null;
+function formatStationValue(v){ if(!v) return 'not set'; return v.split(',').join(' · '); }
 async function renderArchive(){
   const card=$('archiveCard'); if(!card||!party) return;
   if(chapterData && chapterData.archive_intro && chapterData.archive_intro.text){
@@ -551,7 +556,7 @@ function renderArchiveStations(){
     div.className='kv';
     let right=archiveStationStatus(st);
     if(st.shared_output) right+=' · '+st.shared_output;
-    div.innerHTML='<span>'+meta.glyph+' '+meta.name+' <span class="hint">('+(st.value||'not set')+')</span></span><span>'+escapeHtml(right)+'</span>';
+    div.innerHTML='<span>'+meta.glyph+' '+meta.name+' <span class="hint">('+formatStationValue(st.value)+')</span></span><span>'+escapeHtml(right)+'</span>';
     wrap.appendChild(div);
   });
 }
@@ -579,6 +584,44 @@ function renderArchiveOwn(){
     v.textContent=st.verse;
     wrap.appendChild(v);
   }
+  const roomStations = archiveRoom && archiveRoom.stations ? archiveRoom.stations : null;
+  if(st.seat==='C' && roomStations){
+    const a=roomStations.A;
+    const sig=document.createElement('p');
+    sig.className='hint';
+    if(a && a.is_correct) sig.textContent='The projection shows: a bar of darkness lies above two narrow vertical gaps, with an opening beneath. Which stencil holds exactly that negative space?';
+    else if(a && a.value) sig.textContent='Light reaches the wheel but the projected edges blur and drift.';
+    else sig.textContent='The projection slot is dark. Player A has not set a usable light.';
+    wrap.appendChild(sig);
+  }
+  if(st.seat==='D' && roomStations){
+    const b=roomStations.B, c=roomStations.C;
+    const sigB=document.createElement('p'); sigB.className='hint';
+    sigB.textContent=(b && b.is_correct)?'Bell echoes answered: III':'No complete echo yet';
+    wrap.appendChild(sigB);
+    const sigC=document.createElement('p'); sigC.className='hint';
+    sigC.textContent=(c && c.is_correct)?"Key's etched bearing: W":'No stable bearing yet';
+    wrap.appendChild(sigC);
+  }
+  if(st.inspect && st.inspect.length){
+    const insp=document.createElement('div');
+    insp.style.marginTop='12px';
+    st.inspect.forEach(item=>{
+      const key=st.seat+':'+item.id;
+      const b=document.createElement('button');
+      b.type='button'; b.className='secondary'; b.style.cssText='display:block;width:100%;margin-bottom:8px;text-align:left';
+      b.textContent=item.button;
+      b.addEventListener('click',()=>{ revealedInspect[key]=!revealedInspect[key]; renderArchiveOwn(); });
+      insp.appendChild(b);
+      if(revealedInspect[key]){
+        const t=document.createElement('p');
+        t.className='hint';
+        t.textContent=item.text;
+        insp.appendChild(t);
+      }
+    });
+    wrap.appendChild(insp);
+  }
   const myRoom = archiveRoom && archiveRoom.stations ? archiveRoom.stations[st.seat] : null;
   if(st.seat==='B'){
     bellSeq=[];
@@ -593,7 +636,8 @@ function renderArchiveOwn(){
       b.type='button'; b.className='choice';
       b.innerHTML='<strong>'+escapeHtml(c.glyph||'')+' '+escapeHtml(c.label)+'</strong>';
       b.addEventListener('click',()=>{
-        if(bellSeq.length<3){ bellSeq.push(c.value); renderBellSeq(); }
+        if(bellSeq.length>=3){ bellSeq=[c.value]; } else { bellSeq.push(c.value); }
+        renderBellSeq();
       });
       btns.appendChild(b);
     });
@@ -607,6 +651,75 @@ function renderArchiveOwn(){
     });
     wrap.appendChild(commit);
     renderBellSeq();
+  } else if(st.control_groups && st.control_groups.length){
+    if(ownSeatKey!==st.seat){
+      ownSeatKey=st.seat; groupSel={};
+      const parts=(myRoom && myRoom.value)?myRoom.value.split(','):[];
+      st.control_groups.forEach((g,gi)=>{
+        const pv=parts[gi];
+        if(pv && (g.options||[]).some(o=>o.value===pv)) groupSel[g.id]=pv;
+      });
+    }
+    st.control_groups.forEach(g=>{
+      const lab=document.createElement('p');
+      lab.className='hint'; lab.style.margin='14px 0 6px';
+      lab.textContent=g.label;
+      wrap.appendChild(lab);
+      const btns=document.createElement('div');
+      btns.className='choices';
+      (g.options||[]).forEach(o=>{
+        const b=document.createElement('button');
+        b.type='button'; b.className='choice';
+        if(groupSel[g.id]===o.value) b.classList.add('selected');
+        b.innerHTML='<strong>'+escapeHtml(o.glyph||'')+' '+escapeHtml(o.label)+'</strong>';
+        b.addEventListener('click',()=>{ groupSel[g.id]=o.value; renderArchiveOwn(); });
+        btns.appendChild(b);
+      });
+      wrap.appendChild(btns);
+    });
+    const commit=document.createElement('button');
+    commit.type='button'; commit.className='primary'; commit.style.marginTop='12px';
+    commit.textContent= st.seat==='A' ? 'Turn the lantern →' : 'Test the key wheel →';
+    commit.disabled=!st.control_groups.every(g=>groupSel[g.id]);
+    commit.addEventListener('click',()=>{
+      const vals=st.control_groups.map(g=>groupSel[g.id]);
+      if(vals.some(v=>!v)){ const m=$('archiveMsg'); if(m) m.textContent='Set both choices before committing.'; return; }
+      commitStation(vals.join(','));
+    });
+    wrap.appendChild(commit);
+  } else if(st.seat==='D'){
+    if(ownSeatKey!==st.seat){
+      ownSeatKey=st.seat; snowSel=null;
+      if(myRoom && myRoom.value && (st.controls||[]).some(c=>c.value===myRoom.value)) snowSel=myRoom.value;
+    }
+    const btns=document.createElement('div');
+    btns.className='choices'; btns.style.marginTop='12px';
+    (st.controls||[]).forEach(c=>{
+      const b=document.createElement('button');
+      b.type='button'; b.className='choice';
+      if(snowSel===c.value) b.classList.add('selected');
+      b.innerHTML='<strong>'+escapeHtml(c.glyph||'')+' '+escapeHtml(c.label)+'</strong>';
+      b.addEventListener('click',()=>{ snowSel=c.value; renderArchiveOwn(); });
+      btns.appendChild(b);
+    });
+    wrap.appendChild(btns);
+    const bOk=roomStations && roomStations.B && roomStations.B.is_correct;
+    const cOk=roomStations && roomStations.C && roomStations.C.is_correct;
+    const commit=document.createElement('button');
+    commit.type='button'; commit.className='primary'; commit.style.marginTop='12px';
+    commit.textContent='Rotate the snowflake →';
+    commit.disabled=!snowSel || !bOk || !cOk;
+    commit.addEventListener('click',()=>{
+      if(!snowSel){ const m=$('archiveMsg'); if(m) m.textContent='Choose a direction on the eight-point wheel.'; return; }
+      commitStation(snowSel);
+    });
+    wrap.appendChild(commit);
+    if(!bOk || !cOk){
+      const dep=document.createElement('p');
+      dep.className='hint';
+      dep.textContent='The Snow dial needs a stable bell signal and key bearing first.';
+      wrap.appendChild(dep);
+    }
   } else {
     const btns=document.createElement('div');
     btns.className='choices'; btns.style.marginTop='12px';
