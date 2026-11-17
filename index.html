@@ -18,7 +18,7 @@
 </head>
 <body>
 <div class="shell">
-<header class="top"><div><div class="kicker">An advent adventure</div><div class="brand">The Twenty-Fourth Bell</div></div><button class="player" id="profileLink" aria-label="Open Paco character dossier">P</button></header>
+<header class="top"><div><div class="kicker">An advent adventure</div><div class="brand">The Twenty-Fourth Bell</div></div><button class="player" id="profileLink" aria-label="Open character dossier">?</button></header>
 <div class="soundbar" aria-label="Audio controls"><button class="sound-btn" id="fxToggle" aria-pressed="true" type="button">🔊 Effects on</button><button class="sound-btn" id="musicToggle" aria-pressed="true" type="button">♫ Music on</button><span class="soundstatus" id="audioStatus" role="status" aria-live="polite">Day 1 · The Favor · starts when you open Day 1</span><audio id="ambientTrack" preload="none" loop src="audio/day01_theme.mp3"></audio></div>
 <main class="content">
 <section id="auth" class="screen"><div class="eyebrow">The Twenty-Fourth Bell</div><h1 class="heading">Sign in to play</h1><p class="sub">This is a private family game. Sign in with the email you were invited with and we will send you a magic link. No password needed.</p><div class="card"><label for="authEmail" style="display:block;font-size:13px;font-weight:700;margin-bottom:8px">Your email</label><input id="authEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" style="width:100%;padding:12px;border-radius:10px;border:1px solid #657687;background:#122335;color:#eae8df;font-size:15px"><button class="primary" id="sendMagicLink" style="margin-top:12px">Send magic link →</button><p class="hint" id="authMessage" style="margin-top:12px" aria-live="polite"></p></div><p class="fineprint">Only invited family members can sign in. Your progress is saved to the party, so it follows you across devices.</p></section>
@@ -152,8 +152,8 @@ function renderIdentity(){
     btn.textContent=mySeat.character_name.charAt(0).toUpperCase();
     btn.setAttribute('aria-label','Open '+mySeat.character_name+' character dossier');
   } else {
-    btn.textContent='P';
-    btn.setAttribute('aria-label','Open Paco character dossier');
+    btn.textContent='?';
+    btn.setAttribute('aria-label','Open character dossier');
   }
 }
 
@@ -325,7 +325,7 @@ function renderIntroAndChoices(){
       const b=document.createElement('button');
       b.type='button'; b.className='choice'; b.dataset.choice=key;
       let small=ch.description||'';
-      if(ch.kind==='check' && ch.skill){ small+=' '+ch.skill+' +'+(ch.modifier||0)+'.'; }
+      if(ch.kind==='check' && ch.skill){ small+=' '+ch.skill+' +'+(ch.modifier||0)+', DC '+(ch.dc||10)+'.'; }
       b.innerHTML='<strong>'+letters[i]+'. '+escapeHtml(ch.label||key)+'</strong><small>'+escapeHtml(small)+'</small>';
       b.addEventListener('click',()=>setChoice(key));
       list.appendChild(b);
@@ -625,7 +625,8 @@ function renderArchiveOwn(){
     const attempts = myRoom ? (myRoom.attempts||0) : 0;
     const hints = st.hints||[];
     let tier=-1;
-    if(attempts>=6) tier=2; else if(attempts>=4) tier=1; else if(attempts>=2) tier=0;
+    if(myRoom && myRoom.is_correct) tier=-1;
+    else if(attempts>=6) tier=2; else if(attempts>=4) tier=1; else if(attempts>=2) tier=0;
     hintEl.textContent = tier>=0 && hints[tier] ? 'Hint: '+hints[tier] : '';
   }
 }
