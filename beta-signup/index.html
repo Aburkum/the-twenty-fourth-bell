@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Twenty-Fourth Bell — Beta Signup</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#0d0b12;color:#f2ead8;font-family:Georgia,'Times New Roman',serif;-webkit-text-size-adjust:100%}
+  .wrap{max-width:480px;margin:0 auto;padding:24px 18px 48px}
+  h1{font-size:26px;line-height:1.2;margin:6px 0 4px;color:#f6d98a}
+  .sub{font-size:15px;line-height:1.55;color:#d8cfb8;margin:0 0 18px}
+  .card{background:#1a1622;border:1px solid #3a3247;border-radius:12px;padding:18px 16px;margin-bottom:16px}
+  label{display:block;font-size:14px;margin:16px 0 6px;color:#f2ead8}
+  label .hint{color:#b7ad96;font-size:13px;font-weight:normal}
+  input[type=text],input[type=tel],input[type=email]{width:100%;padding:13px 12px;font-size:17px;border-radius:9px;border:1px solid #554a66;background:#0d0b12;color:#f2ead8}
+  input:focus{outline:2px solid #f6d98a;outline-offset:1px}
+  .classes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .cls{border:1px solid #554a66;background:#0d0b12;color:#f2ead8;border-radius:10px;padding:12px 10px;text-align:left;font-family:inherit;cursor:pointer}
+  .cls b{display:block;font-size:16px;margin-bottom:3px}
+  .cls span{font-size:13px;color:#b7ad96;line-height:1.35;display:block}
+  .cls.sel{border-color:#f6d98a;background:#2b2338;box-shadow:0 0 0 1px #f6d98a}
+  .submit{width:100%;padding:15px;font-size:18px;font-family:inherit;border:none;border-radius:10px;background:#f6d98a;color:#1a1622;cursor:pointer;margin-top:20px}
+  .submit:disabled{opacity:.55;cursor:default}
+  .msg{border-radius:10px;padding:14px;font-size:15px;line-height:1.5;margin-top:16px;display:none}
+  .msg.ok{display:block;background:#1e3320;border:1px solid #4a7a4d;color:#d9f0d4}
+  .msg.err{display:block;background:#3a1d1d;border:1px solid #8a4a4a;color:#f6d3d3}
+  .fine{font-size:13px;color:#b7ad96;line-height:1.5}
+  .req{color:#f6d98a}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The Twenty-Fourth Bell</h1>
+  <p class="sub">A 24-day advent adventure for four players, launching December 1. We are testing Day 1 with four players on Friday, November 20. Register your interest below. Andrew will confirm the four players, and everyone else goes on the waitlist.</p>
+  <div class="card">
+    <p class="fine" style="margin:0">Registering here does <b>not</b> give game access. Confirmed players receive a separate game invitation by email. Sharing this page is safe: it only collects registrations.</p>
+    <form id="signup" autocomplete="on">
+      <label for="name">Your name <span class="req">*</span></label>
+      <input type="text" id="name" name="name" required maxlength="80" placeholder="How should we address you?">
+      <label for="phone">Mobile phone <span class="req">*</span></label>
+      <input type="tel" id="phone" name="phone" required inputmode="tel" placeholder="10-digit US number">
+      <label for="email">Email <span class="req">*</span> <span class="hint">your game invitation arrives here</span></label>
+      <input type="email" id="email" name="email" required maxlength="120" placeholder="you@example.com">
+      <label>First-choice character <span class="req">*</span></label>
+      <div class="classes" id="pref1"></div>
+      <label>Second choice <span class="hint">optional, in case your first choice is taken</span></label>
+      <div class="classes" id="pref2"></div>
+      <button class="submit" type="submit" id="submitBtn">Register for the beta</button>
+      <div class="msg ok" id="okMsg"></div>
+      <div class="msg err" id="errMsg"></div>
+    </form>
+    <p class="fine">Your name, phone, and email are used only for beta selection and invitations.</p>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+'use strict';
+var SUPABASE_URL='https://yfnwwdjxzxlvbtmynrrh.supabase.co';
+var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlmbnd3ZGp4enhsdmJ0bXlucnJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3NjM3MDIsImV4cCI6MjExMDMzOTcwMn0.MVlo1uieB9M3QReE6aCmWSJCZUW5vMufChC0WzAyyuc';
+var sb=null;
+try{ if(window.supabase && window.supabase.createClient){ sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } }catch(_e){ sb=null; }
+var CLASSES=[
+  ['Rogue','Quick wits and quiet ways.'],
+  ['Wizard','Ink, anomalies, and old magic.'],
+  ['Fighter','Steady hands at the gate.'],
+  ['Cleric','Welcome, bread, and old hymns.'],
+  ['Ranger','Roads the town forgot.'],
+  ['Bard','Songs the festival tried to silence.']
+];
+var pref1=null, pref2=null;
+function buildPicker(el, group){
+  CLASSES.forEach(function(c){
+    var b=document.createElement('button');
+    b.type='button'; b.className='cls'; b.dataset.value=c[0];
+    b.innerHTML='<b>'+c[0]+'</b><span>'+c[1]+'</span>';
+    b.addEventListener('click', function(){
+      if(group===1){ pref1=c[0]; if(pref2===pref1){ pref2=null; } }
+      else { pref2 = (pref2===c[0]) ? null : c[0]; if(pref2===pref1){ pref2=null; } }
+      paint();
+    });
+    el.appendChild(b);
+  });
+}
+function paint(){
+  document.querySelectorAll('#pref1 .cls').forEach(function(b){ b.classList.toggle('sel', b.dataset.value===pref1); });
+  document.querySelectorAll('#pref2 .cls').forEach(function(b){ b.classList.toggle('sel', b.dataset.value===pref2); });
+}
+buildPicker(document.getElementById('pref1'),1);
+buildPicker(document.getElementById('pref2'),2);
+paint();
+var form=document.getElementById('signup');
+var okMsg=document.getElementById('okMsg');
+var errMsg=document.getElementById('errMsg');
+var btn=document.getElementById('submitBtn');
+form.addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  okMsg.className='msg ok'; okMsg.style.display='none';
+  errMsg.className='msg err'; errMsg.style.display='none';
+  var name=document.getElementById('name').value.trim();
+  var phone=document.getElementById('phone').value.trim();
+  var email=document.getElementById('email').value.trim();
+  if(!name){ showErr('Please enter your name.'); return; }
+  if(!phone){ showErr('Please enter your mobile phone number.'); return; }
+  if(!email){ showErr('Please enter your email address.'); return; }
+  if(!pref1){ showErr('Please pick a first-choice character.'); return; }
+  if(!sb){ showErr('Could not reach the signup service. Please try again in a moment.'); return; }
+  btn.disabled=true; btn.textContent='Registering…';
+  try{
+    var res=await sb.rpc('register_beta_signup',{p_name:name,p_phone:phone,p_email:email,p_class_pref_1:pref1,p_class_pref_2:pref2});
+    if(res.error){ throw new Error(res.error.message||'Registration failed.'); }
+    okMsg.textContent='You are registered. Andrew will confirm the four players for Friday, November 20 — if you are in, your game invitation will arrive by email at '+email+'.';
+    okMsg.style.display='block';
+    form.querySelectorAll('input,button.cls').forEach(function(el){ el.disabled=true; });
+    btn.textContent='Registered';
+  }catch(e){
+    showErr(e && e.message ? e.message : 'Registration failed. Please try again.');
+    btn.disabled=false; btn.textContent='Register for the beta';
+  }
+});
+function showErr(t){ errMsg.textContent=t; errMsg.style.display='block'; }
+})();
+</script>
+</body>
+</html>
