@@ -55,7 +55,6 @@
 <div class="seattabs" id="playSeatTabs"></div>
 <div id="dayPicker" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 6px"></div>
 <p class="sub" id="playSub">Playing as one seat. Switching seats never signs you out and never writes anything; each seat keeps its own saved story.</p>
-<div id="qaDebugBox" class="card"><div class="card-title">QA diagnostics — errors and last chapter response (test only)</div><div id="qaErrorLog"><p class="hint">No errors captured yet.</p></div><pre id="qaStateLog" style="white-space:pre-wrap;word-break:break-word;font-size:11px;margin:8px 0 0">No state logged yet.</pre><pre id="qaLastRpc" style="white-space:pre-wrap;word-break:break-word;font-size:11px;margin:8px 0 0">No chapter response captured yet.</pre></div>
 <div id="storyView">
 <div id="intro" class="story-copy"></div>
 <div id="decision"><div class="section-title">What do you do?</div><div class="choices" id="choiceList"></div><div class="hint" style="margin-top:11px">Choices permanently change this seat's record. Switch seats to see another character's independent story.</div></div>
@@ -89,70 +88,6 @@ var $=function(id){ return document.getElementById(id); };
 function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function signed(n){ return n>=0?'+'+n:String(n); }
 function shortKey(id){ var p=String(id||'').split('_'); return p.length?p[p.length-1]:id; }
-
-// ---------- QA diagnostics (test only): error trap + last RPC log ----------
-// The cloud browser exposes no DevTools console, so uncaught errors and the
-// raw chapter response are written into the page itself (#qaDebugBox) and
-// mirrored to localStorage, where a diagnosis run can read them. This changes
-// no game behavior and writes no game data.
-function qaLogError(msg,src,line,col,err){
-  try{
-    var box=$('qaErrorLog'); if(!box) return;
-    var stack=(err&&err.stack)?String(err.stack):'';
-    var text='['+new Date().toISOString()+'] '+(msg||'unknown error')+(src?(' @ '+src+':'+line+':'+col):'')+(stack?('\n'+stack):'');
-    var d=document.createElement('pre');
-    d.style.cssText='white-space:pre-wrap;word-break:break-word;font-size:11px;color:#ffd9d9;margin:8px 0 0';
-    d.textContent=text;
-    var ph=box.querySelector('.hint'); if(ph) ph.remove();
-    box.appendChild(d);
-    try{
-      var prev=[]; try{ prev=JSON.parse(localStorage.getItem('gm-qa-v1:errors')||'[]'); }catch(_e2){}
-      prev.push({t:new Date().toISOString(), msg:String(msg||''), src:src||'', line:line||0, col:col||0, stack:stack});
-      localStorage.setItem('gm-qa-v1:errors', JSON.stringify(prev.slice(-20)));
-    }catch(_e3){}
-  }catch(_e4){}
-}
-window.addEventListener('error',function(e){ qaLogError(e.message,e.filename,e.lineno,e.colno,e.error); });
-window.addEventListener('unhandledrejection',function(e){ var r=e.reason; qaLogError('Unhandled rejection: '+(r&&r.message?r.message:String(r)),'',0,0,r); });
-function qaLogRpc(name,r){
-  try{
-    var el=$('qaLastRpc'); if(!el) return;
-    var summary={rpc:name, at:new Date().toISOString(), error:r&&r.error?(r.error.message||String(r.error)):null};
-    var d=r&&r.data?r.data:null;
-    if(d){
-      summary.day=d.day; summary.seat=d.seat; summary.is_locked=d.is_locked;
-      summary.title=d.title; summary.content_version=d.content_version;
-      summary.state=d.state||null;
-      summary.contentKeys=d.content?Object.keys(d.content):null;
-      summary.choiceIds=(d.content&&d.content.choices)?d.content.choices.map(function(c){ return c.id; }):null;
-    }
-    var full=''; try{ full=JSON.stringify(r,null,1); }catch(_e){ full='(could not stringify response)'; }
-    if(full.length>20000) full=full.slice(0,20000)+'\n…(truncated at 20000 chars)';
-    el.textContent='LAST RPC '+name+' — '+JSON.stringify(summary,null,1)+'\n\nFULL RESPONSE (truncated at 20000 chars):\n'+full;
-  }catch(_e){}
-}
-// Log which branch loadPlay/showPlayTab took and the resulting visibility
-// of every view, so a diagnosis run can read the page's own account of
-// what rendered instead of judging from screenshots.
-function qaLogState(tag){
-  try{
-    var el=$('qaStateLog'); if(!el) return;
-    var ids=['storyView','decision','check','resolution','closing','journalView','partyView','lockedView'];
-    var parts=[];
-    for(var i=0;i<ids.length;i++){
-      var n=$(ids[i]);
-      if(!n){ parts.push(ids[i]+':MISSING'); continue; }
-      parts.push(ids[i]+':hidden='+n.classList.contains('hidden')+',len='+((n.textContent||'').trim().length));
-    }
-    var res=$('resolutionBody');
-    var line='['+new Date().toISOString()+'] '+tag+' | seat='+activeSeat+' day='+activeDay+' tab='+playTab
-      +' | chapterData='+(chapterData?('seat='+chapterData.seat+' day='+chapterData.day+' locked='+chapterData.is_locked):'null')
-      +' | state={choice:'+(state?state.choice:null)+',roll:'+(state?state.roll:null)+',outcome:'+(state?state.outcome:null)+'}'
-      +' | resolutionBodyLen='+(res?((res.textContent||'').trim().length):'MISSING')
-      +' | '+parts.join(' ');
-    el.textContent=line+'\n'+el.textContent;
-  }catch(_e){}
-}
 
 // ---------- State ----------
 var session=null, partyId=null, partyName='', dashboardData=null;
@@ -530,7 +465,6 @@ function showPlayTab(tab){
   if(chapterData&&chapterData.seat===activeSeat&&chapterData.day===activeDay){
     var lv=$('lockedView'); if(lv) lv.classList.add('hidden');
   }
-  qaLogState('tab:'+tab);
 }
 // Render into a view without ever leaving it silently blank: on error,
 // show the error in the view so a broken render is visible, not empty.
@@ -563,7 +497,6 @@ async function loadPlay(){
   }catch(e){
     r={error:{message:(e&&e.message)||'network error'}};
   }
-  qaLogRpc('qa_get_chapter', r);
   if(r.error){
     loadingChapter=false;
     var msg=(r.error.message||'unknown error');
@@ -580,7 +513,6 @@ async function loadPlay(){
     $('lockedText').textContent=/not staged/i.test(msg)
       ?('Day '+activeDay+' is not yet available for testing. The next chapter has not been staged, so there is no placeholder story to show.')
       :('Could not load this chapter: '+msg);
-    qaLogState('loadPlay:error:'+msg);
     return;
   }
   var data=r.data||{};
@@ -595,7 +527,6 @@ async function loadPlay(){
     var s=activeSeatObj();
     $('lockedTitle').textContent='Day '+activeDay+' is locked for this seat';
     $('lockedText').textContent='Complete Day '+(activeDay-1)+' as '+(s?s.character_name:'this seat')+' first. Unlocks are per seat: another seat completing the day does not unlock it here.';
-    qaLogState('loadPlay:is_locked');
     return;
   }
   // Defensive: a payload for the wrong seat/day must never trigger a
@@ -610,7 +541,6 @@ async function loadPlay(){
     var tt3=$('playTitle'); if(tt3) tt3.textContent='Day '+activeDay;
     $('lockedTitle').textContent='Chapter not available';
     $('lockedText').textContent='The chapter returned was for a different seat or day. Reload the page to try again.';
-    qaLogState('loadPlay:wrong-seat:data='+data.seat+'/'+data.day);
     return;
   }
   $('lockedView').classList.add('hidden');
@@ -628,7 +558,6 @@ async function loadPlay(){
   }
   loadingChapter=false;
   renderPlay();
-  qaLogState('loadPlay:success');
 }
 
 // ---------- Story ----------
