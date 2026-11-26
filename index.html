@@ -25,7 +25,7 @@
 <section id="choose" class="screen"><div class="eyebrow">Choose your adventurer</div><h1 class="heading">Who are you?</h1><p class="sub">Four seats, six classes. Pick one. Every class has a finished Day 1 story.</p><div class="choices" id="classList"></div><p class="hint" id="chooseMessage" style="margin-top:12px" aria-live="polite"></p><div class="card"><div class="card-title">Your character name</div><input id="charName" type="text" autocomplete="off" maxlength="30" placeholder="e.g. Paco" style="width:100%;padding:12px;border-radius:10px;border:1px solid #657687;background:#122335;color:#eae8df;font-size:15px"><p class="hint" style="margin-top:8px">This is the name the party will see. Pick the class first, then type a name and confirm.</p><button class="primary" id="claimSeat" style="margin-top:12px" disabled>Claim this seat →</button></div><button class="secondary" id="signOutFromChoose" style="margin-top:12px">Sign out</button></section>
 <section id="calendar" class="screen active"><div class="eyebrow">Bellwether · December</div><h1 class="heading">Twenty-four doors.<br>One missing bell.</h1><p class="sub">A little mystery each day. A different perspective for every adventurer.</p><div class="hero" role="img" aria-label="Stylized snowy village at night with a clock tower"><span class="moon"></span><span class="hill"></span><div class="village"><div class="house"></div><div class="tower"></div><div class="house"></div><div class="house"></div></div><div class="hero-label">Every secret has its hour</div></div><div class="row" style="margin:0 0 12px"><strong style="font-family:Georgia,serif;font-size:19px">Your advent calendar</strong><span class="pill">1 of 24</span></div><div class="calendar" id="doors" aria-label="24 day advent calendar"></div><p class="fineprint">Audio v0.2: Day 1 score, “A Town Without a Bell”, with dedicated controls. Prototype mode: Day 1 is available early for testing. Other doors are locked mockups; a real app will use server-side release dates.</p><button class="primary" style="margin-top:16px" id="startStory">Open Day 1 · The Favor →</button></section>
 <section id="story" class="screen"><div class="row"><div class="eyebrow" id="storyEyebrow">December 1 · Paco's story</div><span class="pill">Day 1</span></div><h1 class="heading">The Favor</h1><div class="hero" role="img" aria-label="Bellwether snowy rooftops under the bell tower"><span class="moon"></span><span class="hill"></span><div class="village"><div class="house"></div><div class="tower"></div><div class="house"></div><div class="house"></div></div><div class="hero-label">A town without a bell</div></div><div id="placeholderStory" class="hidden"><div class="card"><div class="card-title">Day 1 · Placeholder</div><p class="hint">This class does not have a finished Day 1 story yet. This is a temporary placeholder so you can try the shared journal.</p><p class="story-copy" style="font-size:15px">You arrive in Bellwether as the light fades. The stone bell tower stands empty, yet every villager you ask insists they heard the bell ring this morning.</p><button class="secondary" id="placeholderObserve">Look closer at the tower</button><div id="placeholderResult" class="hidden" style="margin-top:12px"><div class="outcome-neutral"><strong>You notice something.</strong><p>The bell tower is empty, but the villagers clearly remember hearing it ring. Something does not add up.</p><p><strong>Discovery:</strong> The bell tower is empty, though villagers recall hearing it ring this morning.</p></div><div class="share-row"><button class="secondary" id="placeholderShare">Share discovery with party →</button></div><p class="hint" id="placeholderShareMsg" style="margin-top:8px"></p></div></div></div>
-<div id="intro" class="story-copy"></div><div id="decision"><div class="section-title">What do you do?</div><div class="choices" id="choiceList"></div><div class="hint" style="margin-top:11px">Choices permanently change your record. The full game supports alternate routes in later chapters.</div></div><div id="check" class="hidden"><div class="card"><div class="row"><strong id="checkName">Deception check</strong><span class="pill" id="checkDC">DC 13</span></div><p class="hint" id="checkStakes"></p><div class="roll-stage"><div class="die-wrap"><div class="die" id="die"><svg viewBox="0 0 140 150" role="img" aria-label="Animated twenty-sided die"><path d="M70 5 L131 45 L112 121 L70 145 L28 121 L9 45 Z" fill="#143a55" stroke="#e4bd77" stroke-width="3"/><path d="M70 5 L70 38 L9 45 M70 38 L131 45 M70 38 L28 121 L70 145 L112 121 Z M70 38 L112 121 M9 45 L28 121 M131 45 L112 121" fill="none" stroke="#d2ae6c" stroke-width="2"/><path d="M70 38 L28 121 L112 121 Z" fill="#265a73" stroke="#f0cd8d" stroke-width="2"/><text id="dieValue" x="70" y="91" class="die-number">20</text></svg></div></div><div class="row" style="max-width:230px;margin:4px auto 12px"><span>Modifier <b id="checkMod">+6</b></span><span>Target <b id="checkTarget">13</b></span></div><div id="rollMessage" class="hint" aria-live="polite">When you're ready, tap the button to roll.</div></div><button id="rollButton" class="primary">🎲 Roll the d20</button></div></div><div id="resolution" class="hidden"><div id="resolutionBody" class="outcome-panel"></div><div class="card"><strong>📖 Journal updated</strong><p class="hint">Your new information is now in your private journal. Open it below.</p><button class="secondary" id="toJournal">View my journal →</button></div></div></section>
+<div id="intro" class="story-copy"></div><div id="decision"><div class="section-title">What do you do?</div><div class="choices" id="choiceList"></div><div class="hint" style="margin-top:11px">Choices permanently change your record. The full game supports alternate routes in later chapters.</div></div><div id="check" class="hidden"><div class="card"><div class="row"><strong id="checkName">Deception check</strong><span class="pill" id="checkDC">DC 13</span></div><p class="hint" id="checkStakes"></p><div class="roll-stage"><div class="die-wrap"><div class="die" id="die"><svg viewBox="0 0 140 150" role="img" aria-label="Animated twenty-sided die"><path d="M70 5 L131 45 L112 121 L70 145 L28 121 L9 45 Z" fill="#143a55" stroke="#e4bd77" stroke-width="3"/><path d="M70 5 L70 38 L9 45 M70 38 L131 45 M70 38 L28 121 L70 145 L112 121 Z M70 38 L112 121 M9 45 L28 121 M131 45 L112 121" fill="none" stroke="#d2ae6c" stroke-width="2"/><path d="M70 38 L28 121 L112 121 Z" fill="#265a73" stroke="#f0cd8d" stroke-width="2"/><text id="dieValue" x="70" y="91" class="die-number">20</text></svg></div></div><div class="row" style="max-width:230px;margin:4px auto 12px"><span>Modifier <b id="checkMod">+6</b></span><span>Target <b id="checkTarget">13</b></span></div><div id="rollMessage" class="hint" aria-live="polite">When you're ready, tap the button to roll.</div></div><button id="rollButton" class="primary">🎲 Roll the d20</button></div></div><div id="resolution" class="hidden"><div id="resolutionBody" class="outcome-panel"></div><div class="card"><strong>📖 Journal updated</strong><p class="hint">Your new information is now in your private journal. Open it below.</p><button class="secondary" id="toJournal">View my journal →</button></div></div><div id="closing" class="hidden"></div></section>
 <section id="journal" class="screen"><div class="eyebrow" id="journalEyebrow">Paco · Private discoveries</div><h1 class="heading">Your journal</h1><p class="sub" id="journalSub">Only Paco can see these entries until he chooses to share them.</p><div class="card" id="pacoQuestCard"><div class="card-title">Personal quest · The debt</div><div class="quest">Marta Wick sheltered Paco from the watch two years ago. She has called in the favor he promised her. <strong>Find Marta and learn why she needs help.</strong></div><div class="section-title">The secret you carry</div><div class="quest">You once betrayed your companion Renn by revealing their hiding place to the watch. You don't know what happened to Renn afterward. The party does not know this.</div></div><div class="section-title">Discoveries</div><div class="entry"><div class="glyph">✉</div><div><strong>Marta's letter</strong><p>“The time has come. Come before the first winter bell.”</p></div></div><div class="entry"><div class="glyph">🕯</div><div><strong>The blue-flame signal</strong><p>Marta is warning you it is unsafe to approach her shop openly.</p></div></div><div id="journalResult"></div><div class="info">Sharing is deliberate. In the eventual multiplayer app, a private discovery won't automatically appear in your family's shared journal.</div></section>
 <section id="party" class="screen"><div class="eyebrow">Shared adventure</div><h1 class="heading">The party</h1><p class="sub">Four adventurers, each uncovering a different piece of the same mystery.</p><div class="slots" id="partySlots"></div><div class="section-title">Shared world</div><div class="card"><div class="kv"><span>Village</span><span>Bellwether</span></div><div class="kv"><span>Bell tower</span><span>Empty</span></div><div class="kv"><span>Party clues shared</span><span id="sharedCount">0</span></div><div class="kv"><span>Chapter</span><span>Day 1</span></div></div><div class="section-title">Marta's Lantern Archive</div><div class="card" id="archiveCard"><div class="card-title">The archive cabinet</div><p class="hint" id="archiveIntro"></p><div id="archiveSolved" class="hidden"><div class="outcome-good"><strong>✓ The lantern is lit.</strong><p id="archiveSolvedText"></p></div></div><div id="archiveRoom"><div class="section-title" style="font-size:15px">The cabinet</div><div id="archiveStations"></div><div class="section-title" style="font-size:15px" id="archiveOwnTitle">Your station</div><div id="archiveOwn"></div><p class="hint" id="archiveMsg" style="margin-top:8px" aria-live="polite"></p><p class="hint" id="archiveHint"></p></div></div><div class="section-title">Shared journal</div><div id="sharedJournalList"><div class="hint">Nothing shared yet. When someone shares a discovery, it appears here for the whole party.</div></div><div class="info">Only clues a player chooses to share appear here. Private journals stay private.</div></section>
 <section id="profile" class="screen"><div class="eyebrow">Character dossier</div><h1 class="heading">Paco, the Shadow</h1><p class="sub">Level 1 Halfling Rogue · Trickster focus · Criminal background</p><div id="profilePlaceholder" class="card hidden"><p class="hint">This class does not have a finished dossier yet. Stats, skills, and character choices are still being written.</p></div><div class="card" id="profileHpCard"><div class="row"><div><strong>HP 9</strong><div class="hint">Hit Points</div></div><div><strong>AC 14</strong><div class="hint">Armor Class</div></div><div><strong>+5</strong><div class="hint">Initiative</div></div><div><strong>30 ft.</strong><div class="hint">Speed</div></div></div></div><div class="stats" id="profileStats"><div class="stat"><div class="key">STR</div><div class="num">−1</div><div class="base">8</div></div><div class="stat"><div class="key">DEX</div><div class="num">+3</div><div class="base">16</div></div><div class="stat"><div class="key">CON</div><div class="num">+1</div><div class="base">13</div></div><div class="stat"><div class="key">INT</div><div class="num">+0</div><div class="base">11</div></div><div class="stat"><div class="key">WIS</div><div class="num">+1</div><div class="base">12</div></div><div class="stat"><div class="key">CHA</div><div class="num">+2</div><div class="base">15</div></div></div><div class="section-title" id="profileSkillsTitle">Favored skills</div><div class="card" id="profileSkillsCard"><div class="kv"><span>Deception · Expertise</span><span>+6</span></div><div class="kv"><span>Persuasion · Expertise</span><span>+6</span></div><div class="kv"><span>Stealth</span><span>+5</span></div><div class="kv"><span>Sleight of Hand</span><span>+5</span></div><div class="kv"><span>Insight</span><span>+3</span></div><div class="kv"><span>Investigation</span><span>+2</span></div><div class="kv"><span>Perception</span><span>+1</span></div></div><div class="section-title" id="profileChoicesTitle">Character choices</div><div class="card" id="profileChoicesCard"><div class="kv"><span>Motivation</span><span>Debt to Marta</span></div><div class="kv"><span>Secret</span><span>Betrayed Renn</span></div><div class="kv"><span>Specialty</span><span>Trickster</span></div></div><button id="reset" class="secondary">Reset prototype story</button><p class="fineprint">Reset clears only this browser's demonstration state. It doesn't affect any account or server.</p></section>
@@ -137,11 +137,11 @@ function honestClueText(){
 // ---------- App state (v0.3) ----------
 const $=id=>document.getElementById(id);
 let session=null, party=null, mySeat=null;
-let state={choice:null, roll:null};
-let pickedClass=null, sharing=false, rolling=false;
+let state={choice:null, roll:null, completedAt:null};
+let pickedClass=null, sharing=false, rolling=false, completing=false;
 
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(_e){}}
-function loadLocal(){try{const loaded=JSON.parse(localStorage.getItem(KEY)||'null');if(loaded&&typeof loaded==='object')state={choice:state.choice,roll:state.roll,...loaded}}catch(_e){}}
+function loadLocal(){try{const loaded=JSON.parse(localStorage.getItem(KEY)||'null');if(loaded&&typeof loaded==='object')state={choice:state.choice,roll:state.roll,completedAt:state.completedAt,...loaded}}catch(_e){}}
 loadLocal();
 
 // Header profile button: show the signed-in character's initial, not a fixed "P".
@@ -196,7 +196,7 @@ $('sendMagicLink').addEventListener('click',async ()=>{
 });
 async function signOut(){
   if(sb){ try{ await sb.auth.signOut(); }catch(_e){} }
-  session=null; mySeat=null; party=null; state={choice:null,roll:null}; pickedClass=null;
+  session=null; mySeat=null; party=null; state={choice:null,roll:null,completedAt:null}; pickedClass=null;
   show('auth');
 }
 $('signOutFromChoose').addEventListener('click',signOut);
@@ -263,7 +263,7 @@ async function loadServerState(){
   const {data:rows}=await sb.from('player_state').select('*').eq('player_id',mySeat.id).eq('day',1).limit(1);
   if(rows&&rows.length){
     const r=rows[0];
-    state={choice:r.choice||null, roll:(r.roll===null||r.roll===undefined)?null:r.roll};
+    state={choice:r.choice||null, roll:(r.roll===null||r.roll===undefined)?null:r.roll, completedAt:r.completed_at||null};
     saveLocal();
     return;
   }
@@ -280,9 +280,9 @@ async function loadServerState(){
     if(!error){ saveLocal(); return; }
     // If the insert failed (e.g. a row was created meanwhile), reload from the server.
     const {data:rows2}=await sb.from('player_state').select('*').eq('player_id',mySeat.id).eq('day',1).limit(1);
-    if(rows2&&rows2.length){ const r=rows2[0]; state={choice:r.choice||null,roll:(r.roll===null||r.roll===undefined)?null:r.roll}; saveLocal(); return; }
+    if(rows2&&rows2.length){ const r=rows2[0]; state={choice:r.choice||null,roll:(r.roll===null||r.roll===undefined)?null:r.roll,completedAt:r.completed_at||null}; saveLocal(); return; }
   }
-  state={choice:null,roll:null};
+  state={choice:null,roll:null,completedAt:null};
   saveLocal();
 }
 // Save a no-roll choice (any class). The clue comes from the manifest config.
@@ -291,7 +291,7 @@ async function saveNoRollChoice(key){
   const clue=cfg?cfg.clue:'';
   const {error}=await sb.from('player_state').upsert({player_id:mySeat.id,user_id:session.user.id,party_id:party.id,day:1,choice:key,roll:null,roll_total:null,outcome:null,clue:clue},{onConflict:'player_id,day'});
   if(error){ $('rollMessage').textContent='Could not save your choice. Please try again.'; return false; }
-  state={choice:key,roll:null};
+  state={choice:key,roll:null,completedAt:state.completedAt};
   saveLocal();
   return true;
 }
@@ -362,11 +362,12 @@ function renderStory(){
   const c0=activeConfig()[state.choice];
   if(c0 && c0.kind==='no_roll'){
     $('resolutionBody').innerHTML='<div class="outcome-neutral"><strong>You choose this path.</strong><p>'+escapeHtml(c0.success)+'</p><p><strong>New clue:</strong> '+escapeHtml(c0.clue)+'</p></div>'+shareButtonHtml(clueKeyFor(state.choice),c0.clue);
-    $('resolution').classList.remove('hidden');wireShareButton();return;
+    $('resolution').classList.remove('hidden');wireShareButton();renderClosing();return;
   }
   const c=activeConfig()[state.choice];$('checkName').textContent=c.name+' check';$('checkDC').textContent='DC '+c.dc;$('checkMod').textContent=signed(c.mod);$('checkTarget').textContent=String(c.dc);$('checkStakes').textContent=c.stakes;
   if(state.roll===null){$('check').classList.remove('hidden');$('dieValue').textContent='20';$('rollButton').disabled=false;$('rollButton').textContent='🎲 Roll the d20';$('rollMessage').textContent='Tap to roll. A single result will be saved for this decision.'}
   else{renderOutcome(c,state.roll)}
+  renderClosing();
 }
 $('rollButton').addEventListener('click',async ()=>{
   const cc=activeConfig()[state.choice];
@@ -420,6 +421,58 @@ function renderOutcome(c,die){
   const total=die+c.mod,pass=total>=c.dc;
   const html='<div class="'+(pass?'outcome-good':'outcome-bad')+'"><div class="row"><strong class="'+(pass?'success':'fail')+'">'+(pass?'✓ Success':'! Complication')+'</strong><span class="pill">'+die+' '+signed(c.mod)+' = '+total+' vs DC '+c.dc+'</span></div><p>'+ (pass?c.success:c.failure) +'</p><p><strong>New clue:</strong> '+c.clue+'</p></div>'+shareButtonHtml(clueKeyFor(state.choice),c.clue);
   $('resolutionBody').innerHTML=html;$('resolution').classList.remove('hidden');wireShareButton();
+}
+// ---------- Day 1 closing (Priority 1) ----------
+// After the personal resolution, the story leads onward: a short
+// character-specific transition to Marta's Lantern Archive, a direct button
+// into the Archive, and the end-of-hour beat that records the chapter as
+// complete. Completion never requires the Archive to be solved.
+function closingCopy(){
+  const content = chapterData && chapterData.content ? chapterData.content : null;
+  if(content && content.closing && content.closing.transition){
+    return {transition: content.closing.transition, beat: content.closing.closing_beat||''};
+  }
+  // Fallback for older manifests: the pack's archive transition text.
+  const at = content && content.archive_transition ? content.archive_transition.text : '';
+  return {transition: at, beat: ''};
+}
+function renderClosing(){
+  const el=$('closing'); if(!el) return;
+  const c = state.choice ? activeConfig()[state.choice] : null;
+  const done = !!(state.choice && c && (c.kind==='no_roll' || state.roll!==null));
+  if(!done){ el.classList.add('hidden'); el.innerHTML=''; return; }
+  if(state.completedAt){
+    el.innerHTML='<div class="card"><strong>✓ The first hour is complete.</strong><p class="hint">Your first hour in Bellwether is recorded. Come back tomorrow for the second hour.</p></div>';
+    el.classList.remove('hidden');
+    return;
+  }
+  const copy=closingCopy();
+  let html='';
+  if(copy.transition) html+='<div class="story-copy"><p>'+escapeHtml(copy.transition)+'</p></div>';
+  html+='<button class="primary" id="toArchiveBtn" style="margin-top:14px">Enter Marta\u2019s Archive →</button>';
+  html+='<div class="section-title">The first hour ends</div>';
+  if(copy.beat) html+='<div class="story-copy"><p>'+escapeHtml(copy.beat)+'</p></div>';
+  html+='<button class="primary" id="closeHourBtn" style="margin-top:14px">Close the first hour ✓</button><p class="hint" id="closeHourMsg" style="margin-top:8px">This records your first hour as complete. The Lantern Archive can stay open: you can return to it from the Party tab any time.</p>';
+  el.innerHTML=html;
+  el.classList.remove('hidden');
+  const ab=$('toArchiveBtn');
+  if(ab) ab.addEventListener('click',()=>{ show('party'); setTimeout(()=>{ const card=$('archiveCard'); if(card) card.scrollIntoView({behavior:'smooth',block:'start'}); },50); });
+  const cb=$('closeHourBtn');
+  if(cb) cb.addEventListener('click',completeDay1);
+}
+async function completeDay1(){
+  if(completing) return; completing=true;
+  const btn=$('closeHourBtn'), msg=$('closeHourMsg');
+  if(btn){ btn.disabled=true; btn.textContent='Closing the hour…'; }
+  try{
+    const {data,error}=await sb.rpc('complete_day1');
+    if(error||!data||!data.length){ throw new Error((error&&error.message)||'no result'); }
+    state.completedAt=data[0].completed_at; saveLocal(); renderClosing();
+  }catch(_e){
+    if(btn){ btn.disabled=false; btn.textContent='Close the first hour ✓'; }
+    if(msg) msg.textContent='Could not record the hour. Please try again.';
+  }
+  completing=false;
 }
 // Placeholder (non-Rogue) discovery
 $('placeholderObserve').addEventListener('click',()=>{ $('placeholderResult').classList.remove('hidden'); refreshShareState($('placeholderShare'),'day1_belltower',$('placeholderShareMsg')); });
@@ -779,7 +832,7 @@ $('reset').addEventListener('click',async ()=>{
   if(mySeat&&party){
     await sb.from('player_state').delete().eq('player_id',mySeat.id).eq('day',1);
   }
-  state={choice:null,roll:null}; saveLocal(); renderStory(); renderJournal(); show('calendar');
+  state={choice:null,roll:null,completedAt:null}; saveLocal(); renderStory(); renderJournal(); show('calendar');
 });
 
 // ---------- Init ----------
