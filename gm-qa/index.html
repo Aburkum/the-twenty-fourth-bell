@@ -92,7 +92,11 @@ function shortKey(id){ var p=String(id||'').split('_'); return p.length?p[p.leng
 // ---------- State ----------
 var session=null, partyId=null, partyName='', dashboardData=null;
 var activeSeat='A', activeDay=1, chapterData=null, chapterConfig=null;
-var state={choice:null, roll:null, completedAt:null, staged:false};
+var state={choice:null, roll:null, rollTotal:null, outcome:null, clue:null, completedAt:null, staged:false};
+// Reset confirmations use a two-step arm/confirm on the button itself:
+// native window.confirm() is auto-dismissed in headless/automated browsers
+// (and returns undefined in jsdom), so it can never complete a reset.
+var resetArmed={};
 var rolling=false, sharing=false, completing=false, configuring={};
 var bellSeq=[], groupSel={}, snowSel=null, revealedInspect={}, ownSeatKey=null, archiveRoom=null;
 
@@ -145,7 +149,7 @@ $('sendMagicLink').addEventListener('click',async function(){
 async function signOut(){
   if(sb){ try{ await sb.auth.signOut(); }catch(_e){} }
   session=null; partyId=null; partyName=''; dashboardData=null; chapterData=null; chapterConfig=null;
-  state={choice:null,roll:null,completedAt:null,staged:false};
+  state={choice:null,roll:null,rollTotal:null,outcome:null,clue:null,completedAt:null,staged:false};
   show('auth');
 }
 
@@ -268,7 +272,7 @@ function renderSeatCards(){
       +'<label class="fieldlabel" for="cfgName'+s.seat+'">Character name</label>'
       +'<input id="cfgName'+s.seat+'" class="field" type="text" maxlength="30" value="'+escapeHtml(s.character_name)+'">'
       +'<div class="row" style="margin-top:10px"><button class="secondary" id="cfgApply'+s.seat+'" style="flex:1">Apply seat config</button>'
-      +'<button class="secondary danger" id="resetSeat'+s.seat+'" style="flex:1">Reset seat '+escapeHtml(s.seat)+'…</button></div>'
+      +'<button class="secondary danger" id="resetSeat'+s.seat+'" style="flex:1">'+(resetArmed['seat:'+s.seat]?'Click again to confirm reset — cannot be undone':'Reset seat '+escapeHtml(s.seat)+'…')+'</button></div>'
       +'<p class="hint" id="cfgMsg'+s.seat+'" style="margin-top:8px" aria-live="polite"></p>';
     wrap.appendChild(div);
     (function(seat){
@@ -291,18 +295,44 @@ async function configureSeat(seat){
   await refreshDashboardData();
 }
 async function resetSeat(seat){
-  var s=seatByLetter(seat);
-  var who=s? s.character_name+' (Seat '+seat+')' : ('Seat '+seat);
-  if(!window.confirm('Reset '+who+' in the QA party? This wipes that seat\u2019s story state, shared clues, and Archive station. Other seats are untouched. This cannot be undone.')) return;
-  var msg=$('cfgMsg'+seat);
-  if(msg) msg.textContent='Resetting…';
+  var key='seat:'+seat;
+  var normal='Reset seat '+seat+'…';
+  var armed='Click again to confirm reset — cannot be undone';
+  var btn=$('resetSeat'+seat);
+  if(!resetArmed[key]){
+    resetArmed[key]=true;
+    if(btn) btn.textContent=armed;
+    setTimeout(function(){
+      if(resetArmed[key]){ resetArmed[key]=false; var b2=$('resetSeat'+seat); if(b2) b2.textContent=normal; }
+    },6000);
+    return;
+  }
+  resetArmed[key]=false;
+  if(btn) btn.textContent=normal;
+  var msg0=$('cfgMsg'+seat);
+  if(msg0) msg0.textContent='Resetting…';
   var r=await sb.rpc('qa_reset_seat',{p_party_id:partyId,p_seat:seat});
-  if(r.error){ if(msg) msg.textContent='Could not reset: '+(r.error.message||'unknown error'); return; }
-  if(msg) msg.textContent='Seat '+seat+' reset ('+(r.data.days_cleared||0)+' day(s), '+(r.data.clues_cleared||0)+' clue(s), '+(r.data.station_cleared||0)+' station).';
+  if(r.error){ var m0=$('cfgMsg'+seat); if(m0) m0.textContent='Could not reset: '+(r.error.message||'unknown error'); return; }
+  var doneText='Seat '+seat+' reset ('+(r.data.days_cleared||0)+' day(s), '+(r.data.clues_cleared||0)+' clue(s), '+(r.data.station_cleared||0)+' station).';
   await refreshDashboardData();
+  // The dashboard refresh rebuilds the seat cards, so set the confirmation
+  // on the fresh element afterwards or it vanishes immediately.
+  var msg=$('cfgMsg'+seat);
+  if(msg) msg.textContent=doneText;
 }
 $('resetCampaignBtn').addEventListener('click',async function(){
-  if(!window.confirm('Reset the ENTIRE QA campaign "'+(partyName||partyId)+'"? This wipes every seat\u2019s story state, all shared clues, and all Archive stations. Seat configuration is kept so you can replay immediately. This cannot be undone.')) return;
+  var key='campaign';
+  var normal='Reset entire QA campaign…';
+  var armed='Click again to confirm — wipes every seat';
+  var btn=$('resetCampaignBtn');
+  if(!resetArmed[key]){
+    resetArmed[key]=true;
+    if(btn) btn.textContent=armed;
+    setTimeout(function(){ if(resetArmed[key]){ resetArmed[key]=false; if(btn) btn.textContent=normal; } },6000);
+    return;
+  }
+  resetArmed[key]=false;
+  if(btn) btn.textContent=normal;
   var msg=$('resetMsg'); msg.textContent='Resetting campaign…';
   var r=await sb.rpc('qa_reset_campaign',{p_party_id:partyId});
   if(r.error){ msg.textContent='Could not reset: '+(r.error.message||'unknown error'); return; }
@@ -379,6 +409,14 @@ function buildChapterConfig(content){
   return cfg;
 }
 function activeConfig(){ return chapterConfig||{}; }
+// Look a choice up in the chapter config. The server stores the short key
+// (e.g. 'bluff'), but tolerate a full manifest id as well, so a saved
+// choice never silently fails to match.
+function cfgFor(choice){
+  if(!choice) return null;
+  var cfg=activeConfig();
+  return cfg[choice]||cfg[shortKey(choice)]||null;
+}
 function activeSeatObj(){ return seatByLetter(activeSeat); }
 function clueKeyFor(key){
   var s=activeSeatObj();
@@ -415,7 +453,7 @@ function renderPlay(){
   showPlayTab(playTab);
   if(!chapterData||chapterData.seat!==activeSeat||chapterData.day!==activeDay){ loadPlay(); return; }
   renderStory();
-  renderJournalView();
+  safeRender(renderJournalView,'journalResult');
   renderPartyView();
 }
 function showPlayTab(tab){
@@ -423,37 +461,86 @@ function showPlayTab(tab){
   $('storyView').classList.toggle('hidden',tab!=='story');
   $('journalView').classList.toggle('hidden',tab!=='journal');
   $('partyView').classList.toggle('hidden',tab!=='party');
+  // A stale locked card must not overlay the sub-tabs once a chapter is loaded.
+  if(chapterData&&chapterData.seat===activeSeat&&chapterData.day===activeDay){
+    var lv=$('lockedView'); if(lv) lv.classList.add('hidden');
+  }
+}
+// Render into a view without ever leaving it silently blank: on error,
+// show the error in the view so a broken render is visible, not empty.
+function safeRender(fn,targetId){
+  try{ fn(); }catch(e){
+    var t=$(targetId);
+    if(t) t.innerHTML='<div class="warnbox">This view could not be rendered: '+escapeHtml(e&&e.message?e.message:String(e))+'</div>';
+  }
 }
 $('playStoryTab').addEventListener('click',function(){ showPlayTab('story'); renderStory(); });
-$('playJournalTab').addEventListener('click',function(){ showPlayTab('journal'); renderJournalView(); });
+$('playJournalTab').addEventListener('click',function(){ showPlayTab('journal'); safeRender(renderJournalView,'journalResult'); });
 $('playPartyTab').addEventListener('click',function(){ showPlayTab('party'); renderPartyView(); });
 $('backToDash').addEventListener('click',async function(){ await refreshDashboardData(); show('dashboard'); });
-$('toJournal').addEventListener('click',function(){ showPlayTab('journal'); renderJournalView(); });
+$('toJournal').addEventListener('click',function(){ showPlayTab('journal'); safeRender(renderJournalView,'journalResult'); });
 
+var loadingChapter=false;
 async function loadPlay(){
+  // Re-entrancy guard: renderPlay also calls loadPlay, and the day/seat
+  // buttons call it directly — a second fetch while one is in flight
+  // would race the chapter state. A guarded call just waits for the
+  // in-flight one, which renders at the end.
+  if(loadingChapter) return;
+  loadingChapter=true;
   bellSeq=[]; groupSel={}; snowSel=null; revealedInspect={}; ownSeatKey=null; archiveRoom=null;
   renderSeatTabs(); renderDayPicker();
   var eb=$('playEyebrow'); if(eb) eb.textContent='GM QA · Day '+activeDay+' · loading…';
-  var r=await sb.rpc('qa_get_chapter',{p_party_id:partyId,p_seat:activeSeat,p_day:activeDay});
+  var r;
+  try{
+    r=await sb.rpc('qa_get_chapter',{p_party_id:partyId,p_seat:activeSeat,p_day:activeDay});
+  }catch(e){
+    r={error:{message:(e&&e.message)||'network error'}};
+  }
   if(r.error){
+    loadingChapter=false;
     var msg=(r.error.message||'unknown error');
     chapterData=null; chapterConfig=null;
+    state={choice:null,roll:null,rollTotal:null,outcome:null,clue:null,completedAt:null,staged:false};
     $('storyView').classList.add('hidden');
     var lv=$('lockedView'); lv.classList.remove('hidden');
-    $('lockedTitle').textContent='Chapter not available';
+    // The header must not keep saying "loading…" once the fetch resolved.
+    if(eb) eb.textContent='GM QA · Day '+activeDay;
+    var tt=$('playTitle'); if(tt) tt.textContent='Day '+activeDay;
+    $('lockedTitle').textContent=/not staged/i.test(msg)
+      ?('Day '+activeDay+' is not yet available for testing')
+      :'Chapter not available';
     $('lockedText').textContent=/not staged/i.test(msg)
-      ?'Day '+activeDay+' is not staged for testing yet. The next chapter is not available for testing — no placeholder story is shown.'
+      ?('Day '+activeDay+' is not yet available for testing. The next chapter has not been staged, so there is no placeholder story to show.')
       :('Could not load this chapter: '+msg);
     return;
   }
   var data=r.data||{};
   if(data.is_locked){
+    loadingChapter=false;
     chapterData=data; chapterConfig=null;
+    state={choice:null,roll:null,rollTotal:null,outcome:null,clue:null,completedAt:null,staged:false};
     $('storyView').classList.add('hidden');
     var lv2=$('lockedView'); lv2.classList.remove('hidden');
+    if(eb) eb.textContent='GM QA · Day '+activeDay;
+    var tt2=$('playTitle'); if(tt2) tt2.textContent='Day '+activeDay;
     var s=activeSeatObj();
     $('lockedTitle').textContent='Day '+activeDay+' is locked for this seat';
     $('lockedText').textContent='Complete Day '+(activeDay-1)+' as '+(s?s.character_name:'this seat')+' first. Unlocks are per seat: another seat completing the day does not unlock it here.';
+    return;
+  }
+  // Defensive: a payload for the wrong seat/day must never trigger a
+  // renderPlay/loadPlay loop — show the locked view instead.
+  if(data.seat!==activeSeat||data.day!==activeDay){
+    loadingChapter=false;
+    chapterData=null; chapterConfig=null;
+    state={choice:null,roll:null,rollTotal:null,outcome:null,clue:null,completedAt:null,staged:false};
+    $('storyView').classList.add('hidden');
+    var lv3=$('lockedView'); lv3.classList.remove('hidden');
+    if(eb) eb.textContent='GM QA · Day '+activeDay;
+    var tt3=$('playTitle'); if(tt3) tt3.textContent='Day '+activeDay;
+    $('lockedTitle').textContent='Chapter not available';
+    $('lockedText').textContent='The chapter returned was for a different seat or day. Reload the page to try again.';
     return;
   }
   $('lockedView').classList.add('hidden');
@@ -461,11 +548,15 @@ async function loadPlay(){
   chapterData=data;
   chapterConfig=buildChapterConfig(data.content||{});
   var st=data.state||{};
-  state={choice:st.choice||null, roll:(st.roll===null||st.roll===undefined)?null:st.roll, completedAt:st.completed_at||null, staged:false};
+  // Normalize the saved choice key (shortKey tolerates a full manifest id)
+  // and keep the server's saved result on the state, so the outcome can
+  // always be rendered even if the chapter text cannot be matched.
+  state={choice:st.choice?shortKey(st.choice):null, roll:(st.roll===null||st.roll===undefined)?null:st.roll, rollTotal:(st.roll_total===null||st.roll_total===undefined)?null:st.roll_total, outcome:st.outcome||null, clue:st.clue||null, completedAt:st.completed_at||null, staged:false};
   var s2=activeSeatObj();
   if(s2&&(s2.days||[])){
     for(var i=0;i<s2.days.length;i++){ if(s2.days[i].day===activeDay){ state.staged=!!s2.days[i].staged; break; } }
   }
+  loadingChapter=false;
   renderPlay();
 }
 
@@ -477,10 +568,10 @@ function setChoice(choice){
   state.choice=choice; renderStory();
 }
 async function saveNoRollChoice(key){
-  var cfg=activeConfig()[key];
+  var cfg=cfgFor(key);
   var r=await sb.rpc('qa_save_choice',{p_party_id:partyId,p_seat:activeSeat,p_day:activeDay,p_choice:key});
   if(r.error){ $('rollMessage').textContent='Could not save your choice: '+(r.error.message||'unknown error'); return false; }
-  state={choice:key,roll:null,completedAt:state.completedAt,staged:false};
+  state={choice:key,roll:null,rollTotal:null,outcome:null,clue:(r.data&&r.data.clue)||(cfg?cfg.clue:null),completedAt:state.completedAt,staged:false};
   return true;
 }
 function renderIntroAndChoices(){
@@ -519,13 +610,13 @@ function renderStory(){
   decision.classList.toggle('hidden',!!state.choice);
   check.classList.add('hidden'); res.classList.add('hidden');
   if(!state.choice) { renderClosing(); return; }
-  var c0=activeConfig()[state.choice];
+  var c0=cfgFor(state.choice);
   if(c0&&c0.kind==='no_roll'){
     $('resolutionBody').innerHTML='<div class="outcome-neutral"><strong>You choose this path.</strong><p>'+escapeHtml(c0.success)+'</p><p><strong>New clue:</strong> '+escapeHtml(c0.clue)+'</p></div>'+shareButtonHtml(clueKeyFor(state.choice),c0.clue);
     $('resolution').classList.remove('hidden'); wireShareButton(); renderClosing(); return;
   }
-  var c=activeConfig()[state.choice];
-  if(!c){ renderClosing(); return; }
+  var c=cfgFor(state.choice);
+  if(!c){ renderSavedFallback(); renderClosing(); return; }
   $('checkName').textContent=c.name+' check'; $('checkDC').textContent='DC '+c.dc;
   $('checkMod').textContent=signed(c.mod); $('checkTarget').textContent=String(c.dc);
   $('checkStakes').textContent=c.stakes;
@@ -559,7 +650,7 @@ $('rollButton').addEventListener('click',async function(){
     $('rollButton').disabled=false; $('rollButton').textContent='🎲 Roll the d20'; rolling=false; return;
   }
   var result=r.data[0];
-  state.roll=result.roll; state.staged=!!result.staged;
+  state.roll=result.roll; state.rollTotal=result.roll_total; state.outcome=result.outcome; state.clue=result.clue; state.staged=!!result.staged;
   var die=$('die'); die.classList.remove('rolling'); void die.offsetWidth; die.classList.add('rolling');
   var interval=setInterval(function(){ $('dieValue').textContent=String(Math.floor(Math.random()*20)+1); },75);
   setTimeout(function(){
@@ -571,7 +662,7 @@ $('rollButton').addEventListener('click',async function(){
   },1550);
 });
 function shareButtonHtml(clueKey,clueText){
-  return '<div class="share-row"><button class="secondary" id="shareClueBtn" data-key="'+clueKey+'" data-text="'+clueText.replace(/"/g,'&quot;')+'">Share discovery with party →</button></div><p class="hint" id="shareMsg" style="margin-top:8px"></p>';
+  return '<div class="share-row"><button class="secondary" id="shareClueBtn" data-key="'+clueKey+'" data-text="'+String(clueText||'').replace(/"/g,'&quot;')+'">Share discovery with party →</button></div><p class="hint" id="shareMsg" style="margin-top:8px"></p>';
 }
 async function refreshShareState(btn,clueKey,msgEl){
   if(!btn||!partyId) return;
@@ -596,6 +687,26 @@ function wireShareButton(){
   });
   refreshShareState(b,b.dataset.key,$('shareMsg'));
 }
+// A saved choice exists but the chapter has no matching choice text.
+// Render the outcome from the server state (roll, total, outcome, clue)
+// instead of hiding everything: a saved result must always be visible,
+// and the mismatch is flagged in the UI rather than failing silently.
+function renderSavedFallback(){
+  var note='<p class="hint" style="margin-top:8px">QA note: this seat\u2019s story text could not be matched to the chapter (choice \u2018'+escapeHtml(state.choice)+'\u2019). The saved result above comes from the server.</p>';
+  if(state.roll!==null){
+    var pass=state.outcome==='success';
+    var mod=(state.rollTotal!==null)?(state.rollTotal-state.roll):null;
+    var pill='Natural '+state.roll+(mod!==null?(' '+signed(mod)+' = '+state.rollTotal):'');
+    var html='<div class="'+(pass?'outcome-good':'outcome-bad')+'"><div class="row"><strong class="'+(pass?'success':'fail')+'">'+(pass?'✓ Success':'! Complication')+'</strong><span class="pill">'+escapeHtml(pill)+'</span></div>'+(state.clue?('<p><strong>New clue:</strong> '+escapeHtml(state.clue)+'</p>'):'')+'</div>'
+      +(state.staged?'<p style="margin-top:8px"><span class="staged-badge">STAGED ROLL — test only</span></p>':'')
+      +note
+      +shareButtonHtml(clueKeyFor(state.choice),state.clue||'');
+    $('resolutionBody').innerHTML=html;
+  } else {
+    $('resolutionBody').innerHTML='<div class="outcome-neutral"><strong>You choose this path.</strong>'+(state.clue?('<p><strong>New clue:</strong> '+escapeHtml(state.clue)+'</p>'):'')+'</div>'+note+shareButtonHtml(clueKeyFor(state.choice),state.clue||'');
+  }
+  $('resolution').classList.remove('hidden'); wireShareButton();
+}
 function renderOutcome(c,die){
   var total=die+c.mod, pass=total>=c.dc;
   var html='<div class="'+(pass?'outcome-good':'outcome-bad')+'"><div class="row"><strong class="'+(pass?'success':'fail')+'">'+(pass?'✓ Success':'! Complication')+'</strong><span class="pill">'+die+' '+signed(c.mod)+' = '+total+' vs DC '+c.dc+'</span></div><p>'+(pass?c.success:c.failure)+'</p><p><strong>New clue:</strong> '+escapeHtml(c.clue)+'</p></div>'
@@ -613,8 +724,11 @@ function closingCopy(){
 }
 function renderClosing(){
   var el=$('closing'); if(!el) return;
-  var c=state.choice?activeConfig()[state.choice]:null;
-  var done=!!(state.choice&&c&&(c.kind==='no_roll'||state.roll!==null));
+  var c=state.choice?cfgFor(state.choice):null;
+  // A server-saved choice is always a finished decision: check choices are
+  // stored with their roll, no-roll choices need none. Only an in-session,
+  // not-yet-rolled check choice (config present, roll null) is unfinished.
+  var done=!!state.choice&&(c?(c.kind==='no_roll'||state.roll!==null):true);
   if(!done){ el.classList.add('hidden'); el.innerHTML=''; return; }
   var closeLabel=activeDay===1?'Close the first hour ✓':('Close Day '+activeDay+' ✓');
   var doneLabel=activeDay===1?'✓ The first hour is complete.':'✓ Day '+activeDay+' is complete.';
@@ -665,8 +779,15 @@ function renderJournalView(){
   var html='';
   if(dilemma) html+='<div class="entry"><div class="glyph">◆</div><div><strong>A question to carry</strong><p>'+escapeHtml(dilemma)+'</p></div></div>';
   if(!state.choice){ target.innerHTML=html+'<div class="hint">More entries will appear as '+escapeHtml(name)+' makes discoveries.</div>'; return; }
-  var c=activeConfig()[state.choice];
-  if(!c){ target.innerHTML=html; return; }
+  var c=cfgFor(state.choice);
+  if(!c){
+    if(state.clue||state.roll!==null){
+      target.innerHTML=html+'<div class="entry"><div class="glyph">🔎</div><div><strong>Day '+activeDay+' · saved discovery</strong><p>'+escapeHtml(state.clue||'')+'</p>'+(state.roll!==null?('<p>Rolled '+state.roll+(state.rollTotal!==null?(' = '+state.rollTotal):'')+(state.outcome?(' ('+escapeHtml(state.outcome)+')'):'')+'.</p>'):'')+(state.staged?'<p><span class="staged-badge">STAGED ROLL — test only</span></p>':'')+'</div></div>';
+    } else {
+      target.innerHTML=html;
+    }
+    return;
+  }
   if(c.kind==='no_roll'){
     target.innerHTML=html+'<div class="entry"><div class="glyph">🛡</div><div><strong>Day '+activeDay+' · A quiet choice</strong><p>'+escapeHtml(c.success)+'</p><p><strong>Clue:</strong> '+escapeHtml(c.clue)+'</p></div></div>';
     return;
@@ -696,6 +817,7 @@ function renderPartyJournal(){
 }
 async function renderArchive(){
   var card=$('archiveCard'); if(!card||!partyId) return;
+  try{
   if(chapterData&&chapterData.archive_intro&&chapterData.archive_intro.text){
     $('archiveIntro').textContent=chapterData.archive_intro.text;
   }
@@ -714,6 +836,9 @@ async function renderArchive(){
   var solvedEl=$('archiveSolved'), roomEl=$('archiveRoom');
   if(solvedEl) solvedEl.classList.toggle('hidden',!solved);
   if(roomEl) roomEl.classList.toggle('hidden',solved);
+  }catch(e){
+    var m2=$('archiveMsg'); if(m2) m2.textContent='Could not load the archive room: '+(e&&e.message?e.message:String(e));
+  }
 }
 function renderArchiveStations(){
   var wrap=$('archiveStations'); if(!wrap||!archiveRoom) return;
