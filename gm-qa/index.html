@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101a29">
+<title>GM QA Mode — The Twenty-Fourth Bell</title>
+<style>
+:root{--ink:#eae8df;--muted:#afb5c0;--dark:#101a29;--navy:#17263a;--panel:#1c2c40;--panel2:#24364a;--gold:#e4bd77;--gold2:#f4dfab;--line:rgba(234,232,223,.15);--blue:#8cc7df;--green:#b6ddbe;--red:#f0ada8}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:#0c111a}body{background:radial-gradient(circle at 20% 0%,#2d4355 0%,transparent 34%),#0c111a}button{font:inherit;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a6dfff;outline-offset:3px}.shell{max-width:560px;min-height:100dvh;margin:0 auto;background:var(--dark);box-shadow:0 0 85px rgba(0,0,0,.65);position:relative;padding-bottom:93px}
+.qabanner{background:#4b2b2b;border-bottom:2px solid #e4bd77;color:#f4dfab;text-align:center;font-weight:800;letter-spacing:1.6px;font-size:12px;text-transform:uppercase;padding:10px 12px}
+.top{background:linear-gradient(140deg,#233a4f,#131e2e);border-bottom:1px solid var(--line);padding:20px 21px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px}.kicker{font-size:9px;letter-spacing:2.4px;font-weight:800;color:var(--gold);text-transform:uppercase}.brand{font-family:Georgia,serif;font-size:23px;line-height:1.2;margin-top:4px;letter-spacing:-.4px}.player{border:1px solid #63737a;background:#2c4153;border-radius:100%;height:43px;width:43px;color:var(--gold2);font-size:13px;font-weight:800;flex-shrink:0}.content{padding:22px 20px 28px}.screen{display:none}.screen.active{display:block}.eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:1.7px;text-transform:uppercase}.heading{font-family:Georgia,serif;font-size:31px;line-height:1.11;margin:8px 0 10px}.sub{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 18px}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:16px;margin:15px 0}.card-title{font-weight:750;letter-spacing:.1px;font-size:14px;margin:0 0 10px}.hint{font-size:12px;color:var(--muted);line-height:1.5}.primary{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;border:1px solid #f1d6a0;background:linear-gradient(180deg,#e5c98b,#d7aa63);color:#1d2933;border-radius:12px;min-height:46px;padding:11px 15px;font-weight:800;transition:filter .15s}.primary:hover{filter:brightness(1.08)}.primary:disabled{opacity:.6;cursor:not-allowed}.secondary{background:transparent;border:1px solid #6b7d8f;color:#e6e7e7;border-radius:12px;min-height:43px;padding:11px 12px;font-weight:650;width:100%}.secondary:disabled{opacity:.5;cursor:not-allowed}.story-copy{font-family:Georgia,serif;line-height:1.75;font-size:16px;color:#f1eade}.story-copy p{margin:0 0 15px}.story-copy em{color:var(--gold2)}.choices{display:grid;gap:9px}.choice{display:block;text-align:left;width:100%;padding:13px 14px;background:#23364c;border:1px solid #53657b;border-radius:12px;color:var(--ink)}.choice:hover{border-color:var(--gold)}.choice strong{display:block;font-size:14px;line-height:1.3}.choice small{display:block;color:#b9c7d2;margin-top:4px;line-height:1.45;font-size:12px}.choice.selected{background:#364960;border-color:var(--gold);box-shadow:inset 3px 0 var(--gold)}.pill{font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:750;color:#e9d69e;padding:5px 8px;border-radius:30px;background:#4b452e;border:1px solid #9b8256}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.divider{border:none;border-top:1px solid var(--line);margin:16px 0}.kv{display:flex;justify-content:space-between;border-bottom:1px solid #ffffff18;padding:8px 0;font-size:13px}.kv:last-child{border:0}.kv span:last-child{font-weight:800;color:var(--gold2)}.section-title{font-size:17px;font-family:Georgia,serif;margin:18px 0 9px;color:var(--gold2)}.entry{display:flex;align-items:start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.entry:last-child{border:0}.entry .glyph{height:33px;width:33px;display:grid;place-items:center;background:#35475c;border-radius:9px;flex:0 0 33px}.entry strong{font-size:13px}.entry p{font-size:12px;color:var(--muted);line-height:1.55;margin:4px 0}.info{padding:11px 12px;background:#2e4050;border-left:3px solid var(--gold);font-size:12px;line-height:1.5;border-radius:5px;color:#d5dee6}.roll-stage{text-align:center;padding:10px 0 3px}.die-wrap{perspective:600px;height:144px;display:grid;place-items:center}.die{height:130px;width:130px;filter:drop-shadow(0 10px 11px #0006)}.die svg{height:100%;width:100%;display:block}.die.rolling{animation:tumble 1.55s cubic-bezier(.19,.77,.26,.99)}@keyframes tumble{0%{transform:rotate(-10deg) scale(.8)}18%{transform:rotate(110deg) scale(1.06)}43%{transform:rotate(300deg) scale(.93)}75%{transform:rotate(570deg) scale(1.05)}100%{transform:rotate(720deg) scale(1)}}.die-number{font:bold 39px Georgia,serif;fill:#fff3d1;dominant-baseline:middle;text-anchor:middle}.outcome-good{border-left:3px solid #9cd8b1;padding:12px;background:#20453655;border-radius:6px}.outcome-bad{border-left:3px solid #e5a09d;padding:12px;background:#53312d55;border-radius:6px}.outcome-neutral{border-left:3px solid #91b9d2;padding:12px;background:#23465a66;border-radius:6px}.badge{color:#e9d7a4;background:#403b32;padding:5px 7px;border-radius:6px;font-size:10px;font-weight:800}.staged-badge{color:#ffd9d9;background:#5a2323;padding:5px 7px;border-radius:6px;font-size:10px;font-weight:800;border:1px solid #e5a09d}.muted{color:var(--muted)}.hidden{display:none!important}.fineprint{font-size:11px;color:#93a4b2;margin-top:14px;line-height:1.55}.success{color:var(--green)}.fail{color:var(--red)}.share-row{display:flex;gap:9px;margin-top:12px}.share-row .secondary{flex:1}.outcome-panel{line-height:1.6;font-size:14px}
+.seattabs{display:flex;gap:8px;margin:14px 0}.seattab{flex:1;padding:11px 4px;border-radius:11px;border:1px solid #53657b;background:#213249;color:var(--ink);font-weight:700;font-size:13px;text-align:center}.seattab.active{background:#364960;border-color:var(--gold);box-shadow:inset 0 -3px var(--gold)}.seattab small{display:block;font-weight:400;color:var(--muted);font-size:11px;margin-top:2px}.seatcard{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px;margin:12px 0}.seatcard h3{margin:0 0 4px;font-size:16px}.seatcard h3 .pill{margin-left:6px}.dayline{font-size:12px;color:var(--muted);line-height:1.7}.dayline b{color:var(--ink)}.field{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #657687;background:#122335;color:#eae8df;font-size:14px}.fieldlabel{display:block;font-size:12px;font-weight:700;margin:10px 0 5px}.danger{border-color:#a35c5c;color:#f0ada8}.warnbox{padding:12px;border-radius:10px;background:#4b2b2b55;border:1px solid #a35c5c;font-size:12px;line-height:1.55;color:#f0d0cd}.footer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);right:auto;width:100%;max-width:560px;z-index:5;display:flex;justify-content:space-around;align-items:stretch;height:77px;padding:5px 8px max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#111e2df7;backdrop-filter:blur(12px)}.tab{flex:1;color:#8d9bad;border:none;background:none;font-size:11px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px}.tab .ico{font-size:22px}.tab.active{color:var(--gold2)}
+@media(min-width:560px){.shell{margin:22px auto;min-height:830px;border:1px solid #4c5f70;border-radius:25px;overflow:hidden}.footer{border-radius:0 0 24px 24px}}
+@media(prefers-reduced-motion:reduce){.die.rolling{animation:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+<div class="qabanner">GM QA Mode — test data only · Disposable QA party · Not the family game</div>
+<header class="top"><div><div class="kicker">Game Master QA</div><div class="brand">The Twenty-Fourth Bell</div></div><button class="player" id="signOutBtn" aria-label="Sign out" title="Sign out">⎋</button></header>
+<main class="content">
+
+<section id="auth" class="screen"><div class="eyebrow">GM QA Mode</div><h1 class="heading">Sign in to test</h1><p class="sub">Sign in once with your host account. You will drive all four QA seats from this login; no separate accounts are needed.</p><div class="card"><label for="authEmail" style="display:block;font-size:13px;font-weight:700;margin-bottom:8px">Your email</label><input id="authEmail" class="field" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"><button class="primary" id="sendMagicLink" style="margin-top:12px">Send magic link →</button><p class="hint" id="authMessage" style="margin-top:12px" aria-live="polite"></p></div><p class="fineprint">QA mode only works for the host of a QA party. Anyone else sees an unauthorized message and no QA data. All QA actions are authorized server-side; nothing here touches the test, beta, or production family parties.</p></section>
+
+<section id="unauthorized" class="screen"><div class="eyebrow">GM QA Mode</div><h1 class="heading">Not available</h1><div class="warnbox" id="unauthorizedText">This QA dashboard is available only to the host.</div><p class="fineprint" style="margin-top:14px">If you are the host, make sure you signed in with the host account, then reload. QA parties are listed only for their host.</p><button class="secondary" id="unauthorizedSignOut" style="margin-top:12px">Sign out</button></section>
+
+<section id="partyPick" class="screen"><div class="eyebrow">GM QA Mode</div><h1 class="heading">Choose a QA party</h1><p class="sub">Each QA party is a disposable test campaign, separate from the test, beta, and production parties.</p><div id="partyList"></div><div class="card"><div class="card-title">Create a new QA party</div><input id="newPartyName" class="field" type="text" maxlength="60" value="GM QA — Disposable Test Party"><button class="primary" id="createPartyBtn" style="margin-top:12px">Create QA party →</button><p class="hint" id="partyPickMsg" style="margin-top:10px" aria-live="polite"></p></div></section>
+
+<section id="dashboard" class="screen">
+<div class="row"><div class="eyebrow" id="dashEyebrow">GM QA · Dashboard</div><span class="pill" id="dashPartyPill">QA party</span></div>
+<h1 class="heading" id="dashTitle">Where everyone stands</h1>
+<p class="sub" id="dashSub">Four seats, one login. Pick a seat to play its story, or manage seats below.</p>
+<div class="seattabs" id="seatTabs"></div>
+<div class="row" style="margin:6px 0 2px"><strong style="font-family:Georgia,serif;font-size:17px">Seats</strong><button class="secondary" id="playCurrentSeat" style="width:auto;padding:8px 14px">▶ Play selected seat</button></div>
+<div id="seatCards"></div>
+<div class="section-title" style="font-size:17px;font-family:Georgia,serif;margin:18px 0 9px;color:var(--gold2)">The Lantern Archive — party room</div>
+<div class="card" id="partyRoomCard"><div id="partyRoom"></div><p class="hint" id="partyRoomMsg" style="margin-top:8px" aria-live="polite"></p></div>
+<div class="section-title" style="font-size:17px;font-family:Georgia,serif;margin:18px 0 9px;color:var(--gold2)">Shared journal</div>
+<div id="dashJournal"></div>
+<div class="section-title" style="font-size:17px;font-family:Georgia,serif;margin:18px 0 9px;color:var(--gold2)">Recent QA activity</div>
+<div id="dashAudit"></div>
+<hr class="divider">
+<div class="card"><div class="card-title">Danger zone — resets (QA party only)</div>
+<p class="hint">Resets wipe QA test data only. They can never touch the test, beta, or production parties: those parties are not QA parties, so the server rejects the call before any delete runs.</p>
+<button class="secondary danger" id="resetCampaignBtn" style="margin-top:10px">Reset entire QA campaign…</button>
+<p class="hint" id="resetMsg" style="margin-top:10px" aria-live="polite"></p></div>
+<button class="secondary" id="refreshDash" style="margin-top:6px">Refresh dashboard</button>
+</section>
+
+<section id="play" class="screen">
+<div class="row"><div class="eyebrow" id="playEyebrow">GM QA · Day 1</div><span class="pill" id="playDayPill">Day 1</span></div>
+<h1 class="heading" id="playTitle">The Favor</h1>
+<div class="seattabs" id="playSeatTabs"></div>
+<div id="dayPicker" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 6px"></div>
+<p class="sub" id="playSub">Playing as one seat. Switching seats never signs you out and never writes anything; each seat keeps its own saved story.</p>
+<div id="storyView">
+<div id="intro" class="story-copy"></div>
+<div id="decision"><div class="section-title">What do you do?</div><div class="choices" id="choiceList"></div><div class="hint" style="margin-top:11px">Choices permanently change this seat's record. Switch seats to see another character's independent story.</div></div>
+<div id="check" class="hidden"><div class="card"><div class="row"><strong id="checkName">Check</strong><span class="pill" id="checkDC">DC 13</span></div><p class="hint" id="checkStakes"></p><div class="roll-stage"><div class="die-wrap"><div class="die" id="die"><svg viewBox="0 0 140 150" role="img" aria-label="Animated twenty-sided die"><path d="M70 5 L131 45 L112 121 L70 145 L28 121 L9 45 Z" fill="#143a55" stroke="#e4bd77" stroke-width="3"/><path d="M70 5 L70 38 L9 45 M70 38 L131 45 M70 38 L28 121 L70 145 L112 121 Z M70 38 L112 121 M9 45 L28 121 M131 45 L112 121" fill="none" stroke="#d2ae6c" stroke-width="2"/><path d="M70 38 L28 121 L112 121 Z" fill="#265a73" stroke="#f0cd8d" stroke-width="2"/><text id="dieValue" x="70" y="91" class="die-number">20</text></svg></div></div><div class="row" style="max-width:230px;margin:4px auto 12px"><span>Modifier <b id="checkMod">+6</b></span><span>Target <b id="checkTarget">13</b></span></div><div id="rollMessage" class="hint" aria-live="polite">When you're ready, tap the button to roll.</div></div><button id="rollButton" class="primary">🎲 Roll the d20</button><div class="card" style="margin-top:12px"><div class="card-title">QA staged roll (test only)</div><label class="fieldlabel" for="stagedRoll">Force a specific die result (1–20). Leave blank for a real random roll.</label><input id="stagedRoll" class="field" type="number" min="1" max="20" placeholder="blank = random"><p class="hint" style="margin-top:8px">A staged roll is marked STAGED in the dashboard and the audit log. It can never overwrite a saved roll: once a seat has rolled for a day, the saved result is returned instead.</p></div></div>
+<div id="resolution" class="hidden"><div id="resolutionBody" class="outcome-panel"></div><div class="card"><strong>📖 Journal updated</strong><p class="hint">This seat's new information is in its private journal. Open it below.</p><button class="secondary" id="toJournal">View this seat's journal →</button></div></div>
+<div id="closing" class="hidden"></div>
+</div>
+<div id="lockedView" class="hidden"><div class="card"><div class="card-title" id="lockedTitle">Day locked</div><p class="hint" id="lockedText"></p></div></div>
+<div id="journalView" class="hidden"><div class="eyebrow" id="journalEyebrow">Private discoveries</div><h1 class="heading">Journal</h1><p class="sub" id="journalSub">Only this seat can see these entries until it chooses to share them.</p><div id="journalResult"></div><div class="info">Sharing is deliberate. A private discovery never appears in the party's shared journal until this seat shares it.</div></div>
+<div id="partyView" class="hidden"><div class="eyebrow">Shared adventure</div><h1 class="heading">The party</h1><p class="sub">Four QA seats, each uncovering a different piece of the same mystery.</p><div class="section-title">Marta's Lantern Archive</div><div class="card" id="archiveCard"><div class="card-title">The archive cabinet</div><p class="hint" id="archiveIntro"></p><div id="archiveSolved" class="hidden"><div class="outcome-good"><strong>✓ The lantern is lit.</strong><p id="archiveSolvedText"></p></div></div><div id="archiveRoom"><div class="section-title" style="font-size:15px">The cabinet</div><div id="archiveStations"></div><div class="section-title" style="font-size:15px" id="archiveOwnTitle">Your station</div><div id="archiveOwn"></div><p class="hint" id="archiveMsg" style="margin-top:8px" aria-live="polite"></p><p class="hint" id="archiveHint"></p></div></div><div class="section-title">Shared journal</div><div id="partyJournalList"><div class="hint">Nothing shared yet. When a seat shares a discovery, it appears here for the whole QA party.</div></div></div>
+<div class="row" style="margin-top:16px"><button class="secondary" id="backToDash" style="flex:1">← Dashboard</button><button class="secondary" id="playStoryTab" style="flex:1">Story</button><button class="secondary" id="playJournalTab" style="flex:1">Journal</button><button class="secondary" id="playPartyTab" style="flex:1">Party</button></div>
+</section>
+
+</main>
+<nav class="footer" aria-label="Primary navigation"><button class="tab active" data-tab="dashboard"><span class="ico">▦</span>Dashboard</button><button class="tab" data-tab="play"><span class="ico">✧</span>Play</button></nav>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+'use strict';
+// ---------- Supabase ----------
+// Same project URL and public anon key as the main game (public by design).
+// The QA page calls ONLY qa_* RPCs. It never calls a production RPC and
+// never reads a production table directly.
+var SUPABASE_URL='https://yfnwwdjxzxlvbtmynrrh.supabase.co';
+var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlmbnd3ZGp4enhsdmJ0bXlucnJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3NjM3MDIsImV4cCI6MjExMDMzOTcwMn0.MVlo1uieB9M3QReE6aCmWSJCZUW5vMufChC0WzAyyuc';
+var sb=null;
+try{ if(window.supabase && window.supabase.createClient){ sb=window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } }catch(_e){ sb=null; }
+
+var $=function(id){ return document.getElementById(id); };
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function signed(n){ return n>=0?'+'+n:String(n); }
+function shortKey(id){ var p=String(id||'').split('_'); return p.length?p[p.length-1]:id; }
+
+// ---------- State ----------
+var session=null, partyId=null, partyName='', dashboardData=null;
+var activeSeat='A', activeDay=1, chapterData=null, chapterConfig=null;
+var state={choice:null, roll:null, completedAt:null, staged:false};
+var rolling=false, sharing=false, completing=false, configuring={};
+var bellSeq=[], groupSel={}, snowSel=null, revealedInspect={}, ownSeatKey=null, archiveRoom=null;
+
+var LS_PARTY='gm-qa-v1:party';
+function lsSeatKey(){ return 'gm-qa-v1:seat:'+partyId; }
+function lsDayKey(){ return 'gm-qa-v1:day:'+partyId; }
+function loadPersisted(){
+  try{
+    var s=localStorage.getItem(lsSeatKey()); if(s&&'ABCD'.indexOf(s)>=0) activeSeat=s;
+    var d=parseInt(localStorage.getItem(lsDayKey()),10); if(d>=1) activeDay=d;
+  }catch(_e){}
+}
+function persist(){
+  try{ localStorage.setItem(lsSeatKey(),activeSeat); localStorage.setItem(lsDayKey(),String(activeDay)); }catch(_e){}
+}
+
+function show(tab){
+  document.querySelectorAll('.screen').forEach(function(e){ e.classList.toggle('active', e.id===tab); });
+  var footer=document.querySelector('.footer');
+  var inApp=(tab==='dashboard'||tab==='play');
+  if(footer) footer.style.display=inApp?'flex':'none';
+  document.querySelectorAll('.tab').forEach(function(e){ e.classList.toggle('active', e.dataset.tab===tab); });
+  window.scrollTo({top:0,behavior:'instant'});
+  if(tab==='dashboard') renderDashboard();
+  if(tab==='play') renderPlay();
+}
+document.querySelectorAll('.tab').forEach(function(b){ b.addEventListener('click',function(){ if(partyId) show(b.dataset.tab); }); });
+$('signOutBtn').addEventListener('click',signOut);
+$('unauthorizedSignOut').addEventListener('click',signOut);
+
+// ---------- Auth ----------
+async function initAuth(){
+  if(!sb){ $('authMessage').textContent='Could not load the sign-in service. Check your connection and reload the page.'; show('auth'); return; }
+  var d=await sb.auth.getSession();
+  session=d&&d.data&&d.data.session?d.data.session:null;
+  sb.auth.onAuthStateChange(function(_event,s){ session=s; if(s){ bootAfterSignIn(); } else { partyId=null; dashboardData=null; show('auth'); } });
+  if(session){ await bootAfterSignIn(); } else { show('auth'); }
+}
+$('sendMagicLink').addEventListener('click',async function(){
+  var email=($('authEmail').value||'').trim();
+  var msg=$('authMessage');
+  if(!email||email.indexOf('@')<0){ msg.textContent='Enter a valid email address.'; return; }
+  msg.textContent='Sending your magic link…';
+  $('sendMagicLink').disabled=true;
+  var r=await sb.auth.signInWithOtp({email:email, options:{emailRedirectTo:'https://aburkum.github.io/the-twenty-fourth-bell/gm-qa/'}});
+  $('sendMagicLink').disabled=false;
+  if(r.error){ msg.textContent='Could not send the link: '+(r.error.message||'unknown error'); return; }
+  msg.textContent='Check your email for the magic link. Tap it on this device to sign in.';
+});
+async function signOut(){
+  if(sb){ try{ await sb.auth.signOut(); }catch(_e){} }
+  session=null; partyId=null; partyName=''; dashboardData=null; chapterData=null; chapterConfig=null;
+  state={choice:null,roll:null,completedAt:null,staged:false};
+  show('auth');
+}
+
+// ---------- QA party ----------
+async function bootAfterSignIn(){
+  var r=await sb.rpc('qa_list_parties');
+  if(r.error){ showUnauthorized('Could not list QA parties: '+(r.error.message||'unknown error')); return; }
+  var rows=r.data||[];
+  if(!rows.length){ renderPartyPick([]); show('partyPick'); return; }
+  var saved=null;
+  try{ saved=localStorage.getItem(LS_PARTY); }catch(_e){}
+  var pick=rows.filter(function(p){ return p.party_id===saved; })[0]||null;
+  if(rows.length===1){ await enterParty(rows[0].party_id, rows[0].name); return; }
+  if(pick){ await enterParty(pick.party_id, pick.name); return; }
+  renderPartyPick(rows); show('partyPick');
+}
+function showUnauthorized(text){
+  var el=$('unauthorizedText'); if(el) el.textContent=text||'This QA dashboard is available only to the host.';
+  show('unauthorized');
+}
+function renderPartyPick(rows){
+  var list=$('partyList'); list.innerHTML='';
+  (rows||[]).forEach(function(p){
+    var b=document.createElement('button');
+    b.type='button'; b.className='choice'; b.style.marginBottom='8px';
+    b.innerHTML='<strong>'+escapeHtml(p.name||'QA party')+'</strong><small>'+escapeHtml(p.party_id)+'</small>';
+    b.addEventListener('click',function(){ enterParty(p.party_id, p.name); });
+    list.appendChild(b);
+  });
+  if(!rows||!rows.length){
+    var p=document.createElement('p'); p.className='hint'; p.textContent='No QA parties yet. Create the first one below.';
+    list.appendChild(p);
+  }
+}
+$('createPartyBtn').addEventListener('click',async function(){
+  var name=($('newPartyName').value||'').trim()||'GM QA — Disposable Test Party';
+  var msg=$('partyPickMsg'); msg.textContent='Creating…';
+  $('createPartyBtn').disabled=true;
+  var r=await sb.rpc('qa_create_party',{p_name:name});
+  $('createPartyBtn').disabled=false;
+  if(r.error){ msg.textContent='Could not create the QA party: '+(r.error.message||'unknown error'); return; }
+  msg.textContent='';
+  await enterParty(r.data, name);
+});
+async function enterParty(id,name){
+  partyId=id; partyName=name||'';
+  try{ localStorage.setItem(LS_PARTY,id); }catch(_e){}
+  loadPersisted();
+  var r=await sb.rpc('qa_get_dashboard',{p_party_id:partyId});
+  if(r.error){ showUnauthorized('Could not open this QA party: '+(r.error.message||'unknown error')); return; }
+  dashboardData=r.data;
+  var pill=$('dashPartyPill'); if(pill) pill.textContent='QA · '+(partyName||partyId.slice(0,8));
+  var title=$('dashTitle'); if(title) title.textContent='Where everyone stands';
+  show('dashboard');
+}
+$('refreshDash').addEventListener('click',async function(){
+  var r=await sb.rpc('qa_get_dashboard',{p_party_id:partyId});
+  if(r.error){ showUnauthorized('Could not refresh the dashboard: '+(r.error.message||'unknown error')); return; }
+  dashboardData=r.data; renderDashboard();
+});
+
+// ---------- Dashboard ----------
+function seatByLetter(letter){
+  if(!dashboardData||!dashboardData.seats) return null;
+  for(var i=0;i<dashboardData.seats.length;i++){ if(dashboardData.seats[i].seat===letter) return dashboardData.seats[i]; }
+  return null;
+}
+function renderSeatTabs(){
+  var tabs=[['seatTabs',false],['playSeatTabs',true]];
+  tabs.forEach(function(pair){
+    var el=$(pair[0]); if(!el) return;
+    el.innerHTML='';
+    ['A','B','C','D'].forEach(function(letter){
+      var s=seatByLetter(letter);
+      var b=document.createElement('button');
+      b.type='button'; b.className='seattab'+(activeSeat===letter?' active':'');
+      b.innerHTML='Seat '+letter+'<small>'+escapeHtml(s?(s.character_name+' · '+s.character_class):'—')+'</small>';
+      b.addEventListener('click',function(){
+        if(activeSeat===letter) return;
+        activeSeat=letter; persist();
+        if(pair[1]){ loadPlay(); } else { renderSeatTabs(); renderSeatCards(); }
+      });
+      el.appendChild(b);
+    });
+  });
+}
+function renderDashboard(){
+  if(!dashboardData){ return; }
+  renderSeatTabs();
+  renderSeatCards();
+  renderPartyRoom();
+  renderDashJournal();
+  renderDashAudit();
+}
+function renderSeatCards(){
+  var wrap=$('seatCards'); if(!wrap||!dashboardData) return;
+  wrap.innerHTML='';
+  (dashboardData.seats||[]).forEach(function(s){
+    var div=document.createElement('div');
+    div.className='seatcard';
+    var days=(s.days||[]).map(function(d){
+      var line='Day '+d.day+': '+(d.choice?escapeHtml(d.choice):'no choice yet');
+      if(d.roll!==null&&d.roll!==undefined) line+=' · rolled '+d.roll+' '+(d.roll_total!==null&&d.roll_total!==undefined?('= '+d.roll_total):'')+' ('+escapeHtml(d.outcome||'')+')';
+      if(d.completed_at) line+=' · <b>completed ✓</b>';
+      if(d.staged) line+=' <span class="staged-badge">STAGED ROLL</span>';
+      return '<div class="dayline">'+line+'</div>';
+    }).join('');
+    if(!days) days='<div class="dayline">No progress yet. This seat has not started Day 1.</div>';
+    var st=s.station||{};
+    var stText='Station: '+(st.value?escapeHtml(String(st.value).split(',').join(' · ')):'not set')+' — '+(st.is_correct?'Aligned ✓':(st.stale?'Needs rechecking':(st.value?'Unsettled':'Waiting')));
+    if(st.shared_output) stText+=' · shared: '+escapeHtml(st.shared_output);
+    div.innerHTML='<h3>Seat '+escapeHtml(s.seat)+' · '+escapeHtml(s.character_name)+'<span class="pill">'+escapeHtml(s.character_class)+'</span></h3>'
+      +'<div class="dayline">Highest day unlocked: <b>'+(s.highest_unlocked_day||1)+'</b> · Clue shared: <b>'+(s.clue_shared?'yes':'no')+'</b></div>'
+      +days
+      +'<div class="dayline" style="margin-top:6px">'+stText+'</div>'
+      +'<label class="fieldlabel" for="cfgClass'+s.seat+'">Class (change needs a reset first if this seat has progress)</label>'
+      +'<select id="cfgClass'+s.seat+'" class="field">'
+      +['Rogue','Wizard','Fighter','Cleric','Ranger','Bard'].map(function(c){ return '<option value="'+c+'"'+(c===s.character_class?' selected':'')+'>'+c+'</option>'; }).join('')
+      +'</select>'
+      +'<label class="fieldlabel" for="cfgName'+s.seat+'">Character name</label>'
+      +'<input id="cfgName'+s.seat+'" class="field" type="text" maxlength="30" value="'+escapeHtml(s.character_name)+'">'
+      +'<div class="row" style="margin-top:10px"><button class="secondary" id="cfgApply'+s.seat+'" style="flex:1">Apply seat config</button>'
+      +'<button class="secondary danger" id="resetSeat'+s.seat+'" style="flex:1">Reset seat '+escapeHtml(s.seat)+'…</button></div>'
+      +'<p class="hint" id="cfgMsg'+s.seat+'" style="margin-top:8px" aria-live="polite"></p>';
+    wrap.appendChild(div);
+    (function(seat){
+      $('cfgApply'+seat).addEventListener('click',async function(){ await configureSeat(seat); });
+      $('resetSeat'+seat).addEventListener('click',async function(){ await resetSeat(seat); });
+    })(s.seat);
+  });
+  var playBtn=$('playCurrentSeat');
+  if(playBtn) playBtn.onclick=function(){ loadPlay(); show('play'); };
+}
+async function configureSeat(seat){
+  var cls=$('cfgClass'+seat).value;
+  var name=($('cfgName'+seat).value||'').trim();
+  var msg=$('cfgMsg'+seat);
+  if(!name){ msg.textContent='Type a character name first.'; return; }
+  msg.textContent='Saving…';
+  var r=await sb.rpc('qa_configure_seat',{p_party_id:partyId,p_seat:seat,p_class:cls,p_character_name:name});
+  if(r.error){ msg.textContent='Could not change this seat: '+(r.error.message||'unknown error'); return; }
+  msg.textContent='Seat '+seat+' is now '+name+' · '+cls+'.';
+  await refreshDashboardData();
+}
+async function resetSeat(seat){
+  var s=seatByLetter(seat);
+  var who=s? s.character_name+' (Seat '+seat+')' : ('Seat '+seat);
+  if(!window.confirm('Reset '+who+' in the QA party? This wipes that seat\u2019s story state, shared clues, and Archive station. Other seats are untouched. This cannot be undone.')) return;
+  var msg=$('cfgMsg'+seat);
+  if(msg) msg.textContent='Resetting…';
+  var r=await sb.rpc('qa_reset_seat',{p_party_id:partyId,p_seat:seat});
+  if(r.error){ if(msg) msg.textContent='Could not reset: '+(r.error.message||'unknown error'); return; }
+  if(msg) msg.textContent='Seat '+seat+' reset ('+(r.data.days_cleared||0)+' day(s), '+(r.data.clues_cleared||0)+' clue(s), '+(r.data.station_cleared||0)+' station).';
+  await refreshDashboardData();
+}
+$('resetCampaignBtn').addEventListener('click',async function(){
+  if(!window.confirm('Reset the ENTIRE QA campaign "'+(partyName||partyId)+'"? This wipes every seat\u2019s story state, all shared clues, and all Archive stations. Seat configuration is kept so you can replay immediately. This cannot be undone.')) return;
+  var msg=$('resetMsg'); msg.textContent='Resetting campaign…';
+  var r=await sb.rpc('qa_reset_campaign',{p_party_id:partyId});
+  if(r.error){ msg.textContent='Could not reset: '+(r.error.message||'unknown error'); return; }
+  msg.textContent='Campaign reset ('+(r.data.days_cleared||0)+' day(s), '+(r.data.clues_cleared||0)+' clue(s), '+(r.data.stations_cleared||0)+' station(s)).';
+  await refreshDashboardData();
+});
+async function refreshDashboardData(){
+  var r=await sb.rpc('qa_get_dashboard',{p_party_id:partyId});
+  if(r.error){ showUnauthorized('Could not refresh the dashboard: '+(r.error.message||'unknown error')); return; }
+  dashboardData=r.data; renderDashboard();
+}
+function archiveStationStatus(st){
+  if(!st) return 'Waiting';
+  if(st.is_correct) return 'Aligned ✓';
+  if(st.stale) return 'Needs rechecking';
+  if(st.value) return 'Unsettled';
+  return 'Waiting';
+}
+function renderPartyRoom(){
+  var wrap=$('partyRoom'); if(!wrap||!dashboardData) return;
+  var room=dashboardData.room;
+  if(!room||!room.stations){ wrap.innerHTML='<p class="hint">Archive room could not be loaded.</p>'; return; }
+  var html='';
+  ['A','B','C','D'].forEach(function(seat){
+    var st=room.stations[seat]||{};
+    var right=archiveStationStatus(st);
+    if(st.shared_output) right+=' · '+escapeHtml(st.shared_output);
+    html+='<div class="kv"><span>'+escapeHtml(st.name||seat)+' <span class="hint">('+(st.value?escapeHtml(String(st.value).split(',').join(' · ')):'not set')+')</span></span><span>'+right+'</span></div>';
+  });
+  html+='<div class="kv"><span>Archive solved</span><span>'+(room.solved?'Yes ✓':'No')+'</span></div>';
+  wrap.innerHTML=html;
+  var m=$('partyRoomMsg');
+  if(m) m.textContent=room.solved?'The Lantern Archive is open.':'The Archive is still closed. Each seat works only its own station.';
+}
+function renderDashJournal(){
+  var wrap=$('dashJournal'); if(!wrap||!dashboardData) return;
+  var list=dashboardData.shared_journal||[];
+  if(!list.length){ wrap.innerHTML='<div class="card"><p class="hint">Nothing shared yet. When a seat shares a discovery, it appears here for the whole QA party.</p></div>'; return; }
+  wrap.innerHTML='';
+  list.forEach(function(c){
+    var d=document.createElement('div'); d.className='entry';
+    d.innerHTML='<div class="glyph">🔎</div><div><strong>'+escapeHtml(c.author_character_name)+' · '+escapeHtml(c.author_class)+' (Seat '+escapeHtml(c.author_seat)+')</strong><p>'+escapeHtml(c.clue_text)+'</p></div>';
+    wrap.appendChild(d);
+  });
+}
+function renderDashAudit(){
+  var wrap=$('dashAudit'); if(!wrap||!dashboardData) return;
+  var list=dashboardData.audit_recent||[];
+  if(!list.length){ wrap.innerHTML='<div class="card"><p class="hint">No QA actions yet.</p></div>'; return; }
+  wrap.innerHTML='';
+  list.forEach(function(a){
+    var d=document.createElement('div'); d.className='entry';
+    var p=a.payload||{};
+    var detail=a.action;
+    if(p.choice) detail+=' · '+escapeHtml(p.choice);
+    if(p.roll!==undefined&&p.roll!==null) detail+=' · rolled '+p.roll+' = '+(p.roll_total!==undefined?p.roll_total:'?')+' ('+escapeHtml(p.outcome||'')+')';
+    if(p.value) detail+=' · '+escapeHtml(p.value);
+    if(p.clue_key) detail+=' · '+escapeHtml(p.clue_key);
+    d.innerHTML='<div class="glyph">·</div><div><strong>'+(a.seat?('Seat '+escapeHtml(a.seat)+' · '):'')+escapeHtml(detail)+(a.staged?' <span class="staged-badge">STAGED</span>':'')+'</strong><p>Day '+(a.day!==null&&a.day!==undefined?a.day:'—')+' · '+escapeHtml(a.created_at||'')+'</p></div>';
+    wrap.appendChild(d);
+  });
+}
+
+// ---------- Play view ----------
+var playTab='story';
+function buildChapterConfig(content){
+  var cfg={};
+  (content.choices||[]).forEach(function(ch){
+    var key=shortKey(ch.id);
+    cfg[key]={name:ch.skill||'',mod:ch.modifier||0,dc:ch.dc||10,kind:ch.kind||'check',
+      stakes:ch.stakes||'',success:ch.success_text||'',failure:ch.complication_text||'',
+      clue:ch.clue?ch.clue.text:'',flag:''};
+  });
+  return cfg;
+}
+function activeConfig(){ return chapterConfig||{}; }
+function activeSeatObj(){ return seatByLetter(activeSeat); }
+function clueKeyFor(key){
+  var s=activeSeatObj();
+  if(s&&s.character_class==='Rogue') return 'day1_'+key;
+  var cls=s?s.character_class.toLowerCase():'';
+  return 'day1_'+cls+'_'+key;
+}
+function renderDayPicker(){
+  var wrap=$('dayPicker'); if(!wrap) return;
+  wrap.innerHTML='';
+  var s=activeSeatObj();
+  var maxDay=s&&s.highest_unlocked_day?s.highest_unlocked_day:1;
+  for(var d=1;d<=maxDay+1;d++){
+    (function(day){
+      var b=document.createElement('button');
+      b.type='button'; b.className='choice'; b.style.cssText='width:auto;padding:8px 14px';
+      if(day===activeDay) b.classList.add('selected');
+      b.textContent='Day '+day+(day>maxDay?' 🔒':'');
+      b.addEventListener('click',function(){
+        if(activeDay===day) return;
+        activeDay=day; persist(); loadPlay();
+      });
+      wrap.appendChild(b);
+    })(d);
+  }
+}
+function renderPlay(){
+  renderSeatTabs();
+  renderDayPicker();
+  var s=activeSeatObj();
+  var eb=$('playEyebrow'); if(eb) eb.textContent='GM QA · Day '+activeDay+(s?' · '+s.character_name+' (Seat '+activeSeat+')':'');
+  var pill=$('playDayPill'); if(pill) pill.textContent='Day '+activeDay;
+  var title=$('playTitle'); if(title) title.textContent=chapterData?chapterData.title:('Day '+activeDay);
+  showPlayTab(playTab);
+  if(!chapterData||chapterData.seat!==activeSeat||chapterData.day!==activeDay){ loadPlay(); return; }
+  renderStory();
+  renderJournalView();
+  renderPartyView();
+}
+function showPlayTab(tab){
+  playTab=tab;
+  $('storyView').classList.toggle('hidden',tab!=='story');
+  $('journalView').classList.toggle('hidden',tab!=='journal');
+  $('partyView').classList.toggle('hidden',tab!=='party');
+}
+$('playStoryTab').addEventListener('click',function(){ showPlayTab('story'); renderStory(); });
+$('playJournalTab').addEventListener('click',function(){ showPlayTab('journal'); renderJournalView(); });
+$('playPartyTab').addEventListener('click',function(){ showPlayTab('party'); renderPartyView(); });
+$('backToDash').addEventListener('click',async function(){ await refreshDashboardData(); show('dashboard'); });
+$('toJournal').addEventListener('click',function(){ showPlayTab('journal'); renderJournalView(); });
+
+async function loadPlay(){
+  bellSeq=[]; groupSel={}; snowSel=null; revealedInspect={}; ownSeatKey=null; archiveRoom=null;
+  renderSeatTabs(); renderDayPicker();
+  var eb=$('playEyebrow'); if(eb) eb.textContent='GM QA · Day '+activeDay+' · loading…';
+  var r=await sb.rpc('qa_get_chapter',{p_party_id:partyId,p_seat:activeSeat,p_day:activeDay});
+  if(r.error){
+    var msg=(r.error.message||'unknown error');
+    chapterData=null; chapterConfig=null;
+    $('storyView').classList.add('hidden');
+    var lv=$('lockedView'); lv.classList.remove('hidden');
+    $('lockedTitle').textContent='Chapter not available';
+    $('lockedText').textContent=/not staged/i.test(msg)
+      ?'Day '+activeDay+' is not staged for testing yet. The next chapter is not available for testing — no placeholder story is shown.'
+      :('Could not load this chapter: '+msg);
+    return;
+  }
+  var data=r.data||{};
+  if(data.is_locked){
+    chapterData=data; chapterConfig=null;
+    $('storyView').classList.add('hidden');
+    var lv2=$('lockedView'); lv2.classList.remove('hidden');
+    var s=activeSeatObj();
+    $('lockedTitle').textContent='Day '+activeDay+' is locked for this seat';
+    $('lockedText').textContent='Complete Day '+(activeDay-1)+' as '+(s?s.character_name:'this seat')+' first. Unlocks are per seat: another seat completing the day does not unlock it here.';
+    return;
+  }
+  $('lockedView').classList.add('hidden');
+  $('storyView').classList.remove('hidden');
+  chapterData=data;
+  chapterConfig=buildChapterConfig(data.content||{});
+  var st=data.state||{};
+  state={choice:st.choice||null, roll:(st.roll===null||st.roll===undefined)?null:st.roll, completedAt:st.completed_at||null, staged:false};
+  var s2=activeSeatObj();
+  if(s2&&(s2.days||[])){
+    for(var i=0;i<s2.days.length;i++){ if(s2.days[i].day===activeDay){ state.staged=!!s2.days[i].staged; break; } }
+  }
+  renderPlay();
+}
+
+// ---------- Story ----------
+function setChoice(choice){
+  if(state.choice) return;
+  var cfg=activeConfig()[choice];
+  if(cfg&&cfg.kind==='no_roll'){ saveNoRollChoice(choice).then(function(ok){ if(ok) renderStory(); }); return; }
+  state.choice=choice; renderStory();
+}
+async function saveNoRollChoice(key){
+  var cfg=activeConfig()[key];
+  var r=await sb.rpc('qa_save_choice',{p_party_id:partyId,p_seat:activeSeat,p_day:activeDay,p_choice:key});
+  if(r.error){ $('rollMessage').textContent='Could not save your choice: '+(r.error.message||'unknown error'); return false; }
+  state={choice:key,roll:null,completedAt:state.completedAt,staged:false};
+  return true;
+}
+function renderIntroAndChoices(){
+  var intro=$('intro'), list=$('choiceList');
+  if(!intro||!list) return;
+  var content=chapterData&&chapterData.content?chapterData.content:null;
+  if(content&&content.opening&&content.opening.text){
+    var paras=String(content.opening.text).split(/\n\s*\n/);
+    intro.innerHTML=paras.map(function(p){ return '<p>'+escapeHtml(p.trim())+'</p>'; }).join('');
+  } else {
+    intro.innerHTML='<p>No opening text in this chapter.</p>';
+  }
+  list.innerHTML='';
+  var choices=content&&content.choices?content.choices:null;
+  if(choices&&choices.length){
+    var letters=['A','B','C','D','E','F'];
+    choices.forEach(function(ch,i){
+      var key=shortKey(ch.id);
+      var b=document.createElement('button');
+      b.type='button'; b.className='choice'; b.dataset.choice=key;
+      var small=ch.description||'';
+      if(ch.kind==='check'&&ch.skill){ small+=' '+ch.skill+' +'+(ch.modifier||0)+', DC '+(ch.dc||10)+'.'; }
+      b.innerHTML='<strong>'+letters[i]+'. '+escapeHtml(ch.label||key)+'</strong><small>'+escapeHtml(small)+'</small>';
+      b.addEventListener('click',function(){ setChoice(key); });
+      list.appendChild(b);
+    });
+  }
+}
+function renderStory(){
+  var decision=$('decision'), check=$('check'), res=$('resolution');
+  var seb=$('playEyebrow');
+  var s=activeSeatObj();
+  if(seb&&s) seb.textContent='GM QA · Day '+activeDay+' · '+s.character_name+' (Seat '+activeSeat+')';
+  var title=$('playTitle'); if(title&&chapterData) title.textContent=chapterData.title||('Day '+activeDay);
+  renderIntroAndChoices();
+  decision.classList.toggle('hidden',!!state.choice);
+  check.classList.add('hidden'); res.classList.add('hidden');
+  if(!state.choice) { renderClosing(); return; }
+  var c0=activeConfig()[state.choice];
+  if(c0&&c0.kind==='no_roll'){
+    $('resolutionBody').innerHTML='<div class="outcome-neutral"><strong>You choose this path.</strong><p>'+escapeHtml(c0.success)+'</p><p><strong>New clue:</strong> '+escapeHtml(c0.clue)+'</p></div>'+shareButtonHtml(clueKeyFor(state.choice),c0.clue);
+    $('resolution').classList.remove('hidden'); wireShareButton(); renderClosing(); return;
+  }
+  var c=activeConfig()[state.choice];
+  if(!c){ renderClosing(); return; }
+  $('checkName').textContent=c.name+' check'; $('checkDC').textContent='DC '+c.dc;
+  $('checkMod').textContent=signed(c.mod); $('checkTarget').textContent=String(c.dc);
+  $('checkStakes').textContent=c.stakes;
+  if(state.roll===null){
+    $('check').classList.remove('hidden');
+    $('dieValue').textContent='20';
+    $('rollButton').disabled=false; $('rollButton').textContent='🎲 Roll the d20';
+    $('rollMessage').textContent='Tap to roll. A single result will be saved for this decision.';
+  } else {
+    renderOutcome(c,state.roll);
+  }
+  renderClosing();
+}
+$('rollButton').addEventListener('click',async function(){
+  var cc=activeConfig()[state.choice];
+  if(rolling||state.roll!==null||!state.choice||(cc&&cc.kind==='no_roll')) return;
+  var stagedVal=null;
+  var stagedInput=($('stagedRoll').value||'').trim();
+  if(stagedInput!==''){
+    stagedVal=parseInt(stagedInput,10);
+    if(isNaN(stagedVal)||stagedVal<1||stagedVal>20){ $('rollMessage').textContent='Staged roll must be a whole number from 1 to 20 (or blank for random).'; return; }
+  }
+  rolling=true;
+  $('rollButton').disabled=true; $('rollButton').textContent='Rolling…';
+  $('rollMessage').textContent='The die tumbles…';
+  var params={p_party_id:partyId,p_seat:activeSeat,p_day:activeDay,p_choice:state.choice};
+  if(stagedVal!==null) params.p_force_roll=stagedVal;
+  var r=await sb.rpc('qa_roll',params);
+  if(r.error||!r.data||!r.data.length){
+    $('rollMessage').textContent='The roll could not be saved: '+((r.error&&r.error.message)||'unknown error');
+    $('rollButton').disabled=false; $('rollButton').textContent='🎲 Roll the d20'; rolling=false; return;
+  }
+  var result=r.data[0];
+  state.roll=result.roll; state.staged=!!result.staged;
+  var die=$('die'); die.classList.remove('rolling'); void die.offsetWidth; die.classList.add('rolling');
+  var interval=setInterval(function(){ $('dieValue').textContent=String(Math.floor(Math.random()*20)+1); },75);
+  setTimeout(function(){
+    clearInterval(interval); die.classList.remove('rolling');
+    $('dieValue').textContent=String(result.roll);
+    $('rollMessage').textContent='Natural '+result.roll+'!'+(result.staged?' (STAGED ROLL — test only)':'');
+    rolling=false;
+    setTimeout(function(){ renderStory(); refreshDashboardData(); },480);
+  },1550);
+});
+function shareButtonHtml(clueKey,clueText){
+  return '<div class="share-row"><button class="secondary" id="shareClueBtn" data-key="'+clueKey+'" data-text="'+clueText.replace(/"/g,'&quot;')+'">Share discovery with party →</button></div><p class="hint" id="shareMsg" style="margin-top:8px"></p>';
+}
+async function refreshShareState(btn,clueKey,msgEl){
+  if(!btn||!partyId) return;
+  var shared=false;
+  if(dashboardData&&(dashboardData.shared_journal||[])){
+    shared=dashboardData.shared_journal.some(function(c){ return c.clue_key===clueKey; });
+  }
+  if(shared){
+    btn.disabled=true; btn.textContent='Shared ✓';
+    if(msgEl) msgEl.textContent='Shared to the party journal.';
+  }
+}
+function wireShareButton(){
+  var b=$('shareClueBtn'); if(!b) return;
+  b.addEventListener('click',async function(){
+    if(sharing) return; sharing=true;
+    var msg=$('shareMsg'); msg.textContent='Sharing…';
+    var r=await sb.rpc('qa_share_clue',{p_party_id:partyId,p_seat:activeSeat,p_day:activeDay,p_clue_key:b.dataset.key,p_clue_text:b.dataset.text});
+    if(r.error){ msg.textContent='Could not share: '+(r.error.message||'unknown error'); }
+    else { msg.textContent='Shared to the party journal.'; b.disabled=true; b.textContent='Shared ✓'; await refreshDashboardData(); }
+    sharing=false;
+  });
+  refreshShareState(b,b.dataset.key,$('shareMsg'));
+}
+function renderOutcome(c,die){
+  var total=die+c.mod, pass=total>=c.dc;
+  var html='<div class="'+(pass?'outcome-good':'outcome-bad')+'"><div class="row"><strong class="'+(pass?'success':'fail')+'">'+(pass?'✓ Success':'! Complication')+'</strong><span class="pill">'+die+' '+signed(c.mod)+' = '+total+' vs DC '+c.dc+'</span></div><p>'+(pass?c.success:c.failure)+'</p><p><strong>New clue:</strong> '+escapeHtml(c.clue)+'</p></div>'
+    +(state.staged?'<p style="margin-top:8px"><span class="staged-badge">STAGED ROLL — test only</span></p>':'')
+    +shareButtonHtml(clueKeyFor(state.choice),c.clue);
+  $('resolutionBody').innerHTML=html; $('resolution').classList.remove('hidden'); wireShareButton();
+}
+function closingCopy(){
+  var content=chapterData&&chapterData.content?chapterData.content:null;
+  if(content&&content.closing&&content.closing.transition){
+    return {transition:content.closing.transition, beat:content.closing.closing_beat||''};
+  }
+  var at=content&&content.archive_transition?content.archive_transition.text:'';
+  return {transition:at, beat:''};
+}
+function renderClosing(){
+  var el=$('closing'); if(!el) return;
+  var c=state.choice?activeConfig()[state.choice]:null;
+  var done=!!(state.choice&&c&&(c.kind==='no_roll'||state.roll!==null));
+  if(!done){ el.classList.add('hidden'); el.innerHTML=''; return; }
+  var closeLabel=activeDay===1?'Close the first hour ✓':('Close Day '+activeDay+' ✓');
+  var doneLabel=activeDay===1?'✓ The first hour is complete.':'✓ Day '+activeDay+' is complete.';
+  if(state.completedAt){
+    el.innerHTML='<div class="card"><strong>'+doneLabel+'</strong><p class="hint">This seat\u2019s day is recorded. '+(activeDay===1?'Come back tomorrow for the second hour.':'The next day unlocks for this seat.')+'</p></div>';
+    el.classList.remove('hidden');
+    return;
+  }
+  var copy=closingCopy();
+  var html='';
+  if(copy.transition) html+='<div class="story-copy"><p>'+escapeHtml(copy.transition)+'</p></div>';
+  html+='<button class="primary" id="toArchiveBtn" style="margin-top:14px">Enter Marta\u2019s Archive →</button>';
+  html+='<div class="section-title">The hour ends</div>';
+  if(copy.beat) html+='<div class="story-copy"><p>'+escapeHtml(copy.beat)+'</p></div>';
+  html+='<button class="primary" id="closeDayBtn" style="margin-top:14px">'+closeLabel+'</button><p class="hint" id="closeDayMsg" style="margin-top:8px">This records this seat\u2019s day as complete. The Lantern Archive can stay open: return to it from the Party tab any time.</p>';
+  el.innerHTML=html;
+  el.classList.remove('hidden');
+  var ab=$('toArchiveBtn');
+  if(ab) ab.addEventListener('click',function(){ showPlayTab('party'); renderPartyView(); setTimeout(function(){ var card=$('archiveCard'); if(card) card.scrollIntoView({behavior:'smooth',block:'start'}); },50); });
+  var cb=$('closeDayBtn');
+  if(cb) cb.addEventListener('click',completeDay);
+}
+async function completeDay(){
+  if(completing) return; completing=true;
+  var btn=$('closeDayBtn'), msg=$('closeDayMsg');
+  if(btn){ btn.disabled=true; btn.textContent='Closing…'; }
+  var r=await sb.rpc('qa_complete_day',{p_party_id:partyId,p_seat:activeSeat,p_day:activeDay});
+  if(r.error||!r.data||!r.data.length){
+    if(btn){ btn.disabled=false; btn.textContent=activeDay===1?'Close the first hour ✓':('Close Day '+activeDay+' ✓'); }
+    if(msg) msg.textContent='Could not record the day: '+((r.error&&r.error.message)||'unknown error');
+    completing=false; return;
+  }
+  state.completedAt=r.data[0].completed_at;
+  completing=false;
+  renderClosing();
+  await refreshDashboardData();
+}
+
+// ---------- Journal ----------
+function renderJournalView(){
+  var target=$('journalResult');
+  if(!target) return;
+  var s=activeSeatObj();
+  var name=s?s.character_name:'This seat';
+  var eb=$('journalEyebrow'); if(eb) eb.textContent=name+' · Private discoveries';
+  var sub=$('journalSub'); if(sub) sub.textContent='Only '+name+' can see these entries until it chooses to share them.';
+  var dilemma=chapterData&&chapterData.content&&chapterData.content.dilemma?chapterData.content.dilemma.text:null;
+  var html='';
+  if(dilemma) html+='<div class="entry"><div class="glyph">◆</div><div><strong>A question to carry</strong><p>'+escapeHtml(dilemma)+'</p></div></div>';
+  if(!state.choice){ target.innerHTML=html+'<div class="hint">More entries will appear as '+escapeHtml(name)+' makes discoveries.</div>'; return; }
+  var c=activeConfig()[state.choice];
+  if(!c){ target.innerHTML=html; return; }
+  if(c.kind==='no_roll'){
+    target.innerHTML=html+'<div class="entry"><div class="glyph">🛡</div><div><strong>Day '+activeDay+' · A quiet choice</strong><p>'+escapeHtml(c.success)+'</p><p><strong>Clue:</strong> '+escapeHtml(c.clue)+'</p></div></div>';
+    return;
+  }
+  var pass=state.roll!==null&&state.roll+c.mod>=c.dc;
+  if(state.roll===null){ target.innerHTML=html+'<div class="hint">A '+escapeHtml(c.name)+' check is waiting in the story.</div>'; return; }
+  target.innerHTML=html+'<div class="entry"><div class="glyph">🔎</div><div><strong>Day '+activeDay+' · '+escapeHtml(c.name)+' '+(pass?'success':'complication')+'</strong><p>'+escapeHtml(c.clue)+'</p><p>Rolled '+state.roll+' '+signed(c.mod)+' = '+(state.roll+c.mod)+' against DC '+c.dc+'.</p>'+(state.staged?'<p><span class="staged-badge">STAGED ROLL — test only</span></p>':'')+'</div></div>';
+}
+
+// ---------- Party / Lantern Archive ----------
+var ARCHIVE_STATIONS={A:{glyph:'♨',name:'Flame'},B:{glyph:'♬',name:'Bell'},C:{glyph:'⚿',name:'Key'},D:{glyph:'❄',name:'Snow'}};
+function formatStationValue(v){ if(!v) return 'not set'; return String(v).split(',').join(' · '); }
+async function renderPartyView(){
+  renderPartyJournal();
+  await renderArchive();
+}
+function renderPartyJournal(){
+  var jl=$('partyJournalList'); if(!jl) return;
+  var list=(dashboardData&&dashboardData.shared_journal)||[];
+  if(!list.length){ jl.innerHTML='<div class="hint">Nothing shared yet. When a seat shares a discovery, it appears here for the whole QA party.</div>'; return; }
+  jl.innerHTML='';
+  list.forEach(function(c){
+    var d=document.createElement('div'); d.className='entry';
+    d.innerHTML='<div class="glyph">🔎</div><div><strong>'+escapeHtml(c.author_character_name)+' · '+escapeHtml(c.author_class)+' (Seat '+escapeHtml(c.author_seat)+')</strong><p>'+escapeHtml(c.clue_text)+'</p></div>';
+    jl.appendChild(d);
+  });
+}
+async function renderArchive(){
+  var card=$('archiveCard'); if(!card||!partyId) return;
+  if(chapterData&&chapterData.archive_intro&&chapterData.archive_intro.text){
+    $('archiveIntro').textContent=chapterData.archive_intro.text;
+  }
+  if(chapterData&&chapterData.archive_solved&&chapterData.archive_solved.text){
+    $('archiveSolvedText').textContent=chapterData.archive_solved.text;
+  }
+  var r=await sb.rpc('qa_get_archive',{p_party_id:partyId,p_seat:activeSeat});
+  if(r.error||!r.data){
+    var m=$('archiveMsg'); if(m) m.textContent='Could not load the archive room: '+((r.error&&r.error.message)||'unknown error');
+    return;
+  }
+  archiveRoom=r.data;
+  renderArchiveStations();
+  renderArchiveOwn();
+  var solved=!!r.data.solved;
+  var solvedEl=$('archiveSolved'), roomEl=$('archiveRoom');
+  if(solvedEl) solvedEl.classList.toggle('hidden',!solved);
+  if(roomEl) roomEl.classList.toggle('hidden',solved);
+}
+function renderArchiveStations(){
+  var wrap=$('archiveStations'); if(!wrap||!archiveRoom) return;
+  wrap.innerHTML='';
+  ['A','B','C','D'].forEach(function(seat){
+    var st=archiveRoom.stations[seat]||{};
+    var meta=ARCHIVE_STATIONS[seat];
+    var div=document.createElement('div');
+    div.className='kv';
+    var right=archiveStationStatus(st);
+    if(st.shared_output) right+=' · '+st.shared_output;
+    div.innerHTML='<span>'+meta.glyph+' '+meta.name+' <span class="hint">('+formatStationValue(st.value)+')</span></span><span>'+escapeHtml(right)+'</span>';
+    wrap.appendChild(div);
+  });
+}
+function renderArchiveOwn(){
+  var wrap=$('archiveOwn'); if(!wrap) return;
+  wrap.innerHTML='';
+  var st=chapterData&&chapterData.station?chapterData.station:null;
+  if(!st){ wrap.innerHTML='<p class="hint">This seat\u2019s station details could not be loaded. Reload the page to try again.</p>'; return; }
+  var title=$('archiveOwnTitle');
+  if(title) title.textContent='Your station · '+st.name+' (Seat '+st.seat+')';
+  if(st.description){
+    var desc=document.createElement('p'); desc.className='hint'; desc.textContent=st.description;
+    wrap.appendChild(desc);
+  }
+  if(st.inscription){
+    var ins=document.createElement('p');
+    ins.innerHTML='<strong>'+escapeHtml(st.inscription)+'</strong>';
+    wrap.appendChild(ins);
+  }
+  if(st.verse){
+    var v=document.createElement('p'); v.className='hint'; v.textContent=st.verse;
+    wrap.appendChild(v);
+  }
+  var roomStations=archiveRoom&&archiveRoom.stations?archiveRoom.stations:null;
+  if(st.seat==='C'&&roomStations){
+    var a=roomStations.A;
+    var sig=document.createElement('p'); sig.className='hint';
+    if(a&&a.is_correct) sig.textContent='The projection shows: a bar of darkness lies above two narrow vertical gaps, with an opening beneath. Which stencil holds exactly that negative space?';
+    else if(a&&a.value) sig.textContent='Light reaches the wheel but the projected edges blur and drift.';
+    else sig.textContent='The projection slot is dark. Player A has not set a usable light.';
+    wrap.appendChild(sig);
+  }
+  if(st.seat==='D'&&roomStations){
+    var b=roomStations.B, c=roomStations.C;
+    var sigB=document.createElement('p'); sigB.className='hint';
+    sigB.textContent=(b&&b.is_correct)?'Bell echoes answered: III':'No complete echo yet';
+    wrap.appendChild(sigB);
+    var sigC=document.createElement('p'); sigC.className='hint';
+    sigC.textContent=(c&&c.is_correct)?"Key's etched bearing: W":'No stable bearing yet';
+    wrap.appendChild(sigC);
+  }
+  if(st.inspect&&st.inspect.length){
+    var insp=document.createElement('div'); insp.style.marginTop='12px';
+    st.inspect.forEach(function(item){
+      var key=st.seat+':'+item.id;
+      var b=document.createElement('button');
+      b.type='button'; b.className='secondary'; b.style.cssText='display:block;width:100%;margin-bottom:8px;text-align:left';
+      b.textContent=item.button;
+      b.addEventListener('click',function(){ revealedInspect[key]=!revealedInspect[key]; renderArchiveOwn(); });
+      insp.appendChild(b);
+      if(revealedInspect[key]){
+        var t=document.createElement('p'); t.className='hint'; t.textContent=item.text;
+        insp.appendChild(t);
+      }
+    });
+    wrap.appendChild(insp);
+  }
+  var myRoom=archiveRoom&&archiveRoom.stations?archiveRoom.stations[st.seat]:null;
+  if(st.seat==='B'){
+    bellSeq=[];
+    var seqRow=document.createElement('div');
+    seqRow.className='row'; seqRow.style.cssText='gap:8px;flex-wrap:wrap';
+    seqRow.id='bellSeqRow';
+    wrap.appendChild(seqRow);
+    var btns=document.createElement('div');
+    btns.className='choices'; btns.style.marginTop='12px';
+    (st.controls||[]).forEach(function(c){
+      var b=document.createElement('button');
+      b.type='button'; b.className='choice';
+      b.innerHTML='<strong>'+escapeHtml(c.glyph||'')+' '+escapeHtml(c.label)+'</strong>';
+      b.addEventListener('click',function(){
+        if(bellSeq.length>=3){ bellSeq=[c.value]; } else { bellSeq.push(c.value); }
+        renderBellSeq();
+      });
+      btns.appendChild(b);
+    });
+    wrap.appendChild(btns);
+    var commit=document.createElement('button');
+    commit.type='button'; commit.className='primary'; commit.style.marginTop='12px';
+    commit.textContent='Ring the chimes →';
+    commit.addEventListener('click',function(){
+      if(bellSeq.length!==3){ var m=$('archiveMsg'); if(m) m.textContent='Ring three chimes first.'; return; }
+      commitStation(bellSeq.join(','));
+    });
+    wrap.appendChild(commit);
+    renderBellSeq();
+  } else if(st.control_groups&&st.control_groups.length){
+    if(ownSeatKey!==st.seat){
+      ownSeatKey=st.seat; groupSel={};
+      var parts=(myRoom&&myRoom.value)?String(myRoom.value).split(','):[];
+      st.control_groups.forEach(function(g,gi){
+        var pv=parts[gi];
+        if(pv&&(g.options||[]).some(function(o){ return o.value===pv; })) groupSel[g.id]=pv;
+      });
+    }
+    st.control_groups.forEach(function(g){
+      var lab=document.createElement('p');
+      lab.className='hint'; lab.style.margin='14px 0 6px';
+      lab.textContent=g.label;
+      wrap.appendChild(lab);
+      var btns2=document.createElement('div');
+      btns2.className='choices';
+      (g.options||[]).forEach(function(o){
+        var b=document.createElement('button');
+        b.type='button'; b.className='choice';
+        if(groupSel[g.id]===o.value) b.classList.add('selected');
+        b.innerHTML='<strong>'+escapeHtml(o.glyph||'')+' '+escapeHtml(o.label)+'</strong>';
+        b.addEventListener('click',function(){ groupSel[g.id]=o.value; renderArchiveOwn(); });
+        btns2.appendChild(b);
+      });
+      wrap.appendChild(btns2);
+    });
+    var commit2=document.createElement('button');
+    commit2.type='button'; commit2.className='primary'; commit2.style.marginTop='12px';
+    commit2.textContent=st.seat==='A'?'Turn the lantern →':'Test the key wheel →';
+    commit2.disabled=!st.control_groups.every(function(g){ return groupSel[g.id]; });
+    commit2.addEventListener('click',function(){
+      var vals=st.control_groups.map(function(g){ return groupSel[g.id]; });
+      if(vals.some(function(v){ return !v; })){ var m=$('archiveMsg'); if(m) m.textContent='Set both choices before committing.'; return; }
+      commitStation(vals.join(','));
+    });
+    wrap.appendChild(commit2);
+  } else if(st.seat==='D'){
+    if(ownSeatKey!==st.seat){
+      ownSeatKey=st.seat; snowSel=null;
+      if(myRoom&&myRoom.value&&(st.controls||[]).some(function(c){ return c.value===myRoom.value; })) snowSel=myRoom.value;
+    }
+    var btns3=document.createElement('div');
+    btns3.className='choices'; btns3.style.marginTop='12px';
+    (st.controls||[]).forEach(function(c){
+      var b=document.createElement('button');
+      b.type='button'; b.className='choice';
+      if(snowSel===c.value) b.classList.add('selected');
+      b.innerHTML='<strong>'+escapeHtml(c.glyph||'')+' '+escapeHtml(c.label)+'</strong>';
+      b.addEventListener('click',function(){ snowSel=c.value; renderArchiveOwn(); });
+      btns3.appendChild(b);
+    });
+    wrap.appendChild(btns3);
+    var bOk=roomStations&&roomStations.B&&roomStations.B.is_correct;
+    var cOk=roomStations&&roomStations.C&&roomStations.C.is_correct;
+    var commit3=document.createElement('button');
+    commit3.type='button'; commit3.className='primary'; commit3.style.marginTop='12px';
+    commit3.textContent='Rotate the snowflake →';
+    commit3.disabled=!snowSel||!bOk||!cOk;
+    commit3.addEventListener('click',function(){
+      if(!snowSel){ var m=$('archiveMsg'); if(m) m.textContent='Choose a direction on the eight-point wheel.'; return; }
+      commitStation(snowSel);
+    });
+    wrap.appendChild(commit3);
+    if(!bOk||!cOk){
+      var dep=document.createElement('p');
+      dep.className='hint';
+      dep.textContent='The Snow dial needs a stable bell signal and key bearing first.';
+      wrap.appendChild(dep);
+    }
+  } else {
+    var btns4=document.createElement('div');
+    btns4.className='choices'; btns4.style.marginTop='12px';
+    (st.controls||[]).forEach(function(c){
+      var b=document.createElement('button');
+      b.type='button'; b.className='choice';
+      if(myRoom&&myRoom.value===c.value) b.classList.add('selected');
+      b.innerHTML='<strong>'+escapeHtml(c.glyph||'')+' '+escapeHtml(c.label)+'</strong>';
+      b.addEventListener('click',function(){ commitStation(c.value); });
+      btns4.appendChild(b);
+    });
+    wrap.appendChild(btns4);
+  }
+  var hintEl=$('archiveHint');
+  if(hintEl){
+    var attempts=myRoom?(myRoom.attempts||0):0;
+    var hints=st.hints||[];
+    var tier=-1;
+    if(myRoom&&myRoom.is_correct) tier=-1;
+    else if(attempts>=6) tier=2; else if(attempts>=4) tier=1; else if(attempts>=2) tier=0;
+    hintEl.textContent=tier>=0&&hints[tier]?('Hint: '+hints[tier]):'';
+  }
+}
+function renderBellSeq(){
+  var row=$('bellSeqRow'); if(!row) return;
+  row.innerHTML='';
+  for(var i=0;i<3;i++){
+    var s=document.createElement('span');
+    s.className='pill';
+    s.style.cssText='padding:10px 12px;font-size:12px;min-width:64px;text-align:center';
+    s.textContent=bellSeq[i]||('— '+(i+1)+' —');
+    row.appendChild(s);
+  }
+  var clear=document.createElement('button');
+  clear.type='button'; clear.className='secondary'; clear.textContent='Clear';
+  clear.style.cssText='min-width:64px';
+  clear.addEventListener('click',function(){ bellSeq=[]; renderBellSeq(); });
+  row.appendChild(clear);
+}
+async function commitStation(value){
+  var msg=$('archiveMsg'); if(msg) msg.textContent='Working the mechanism… (sending "'+value+'")';
+  var r=await sb.rpc('qa_set_station',{p_party_id:partyId,p_seat:activeSeat,p_value:value});
+  if(r.error||!r.data){
+    var em=(r.error&&r.error.message)||'unknown error';
+    if(msg){
+      // v3 has no Day 1 completion gate and no day2.locked manifest
+      // gate, so there are no gate-specific messages to show here.
+      msg.textContent='Could not reach the cabinet: '+em;
+    }
+    return;
+  }
+  var data=r.data;
+  if(msg){
+    // v3 returns `station` as the room station jsonb object. The page
+    // reads the station object from the returned room (the same object),
+    // which is the safer source either way.
+    var stObj=(data.room&&data.room.stations)?data.room.stations[activeSeat]:null;
+    var note='Server: '+(data.feedback===null||data.feedback===undefined?'(no feedback returned)':data.feedback);
+    note+=' · Stored value: '+formatStationValue(stObj?stObj.value:value);
+    note+=' · Room says this station is: '+archiveStationStatus(stObj||{});
+    msg.textContent=note;
+  }
+  bellSeq=[];
+  await renderArchive();
+  await refreshDashboardData();
+}
+
+// ---------- Init ----------
+initAuth();
+})();
+</script>
+</body>
+</html>
