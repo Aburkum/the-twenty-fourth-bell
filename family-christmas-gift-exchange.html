@@ -406,6 +406,22 @@ document.getElementById('favSaveBtn').addEventListener('click', function(){
     });
 });
 
+/* If the giver panel is currently showing the person whose list was
+   just cleared, refresh it right away to the empty state instead of
+   leaving the old answers on screen until "Show Their List" is tapped. */
+function refreshGiverViewIfShowing(clearedName){
+  if(!favViewSel || favViewSel.value!==clearedName) return;
+  var view=document.getElementById('favView');
+  var loadStatus=document.getElementById('favLoadStatus');
+  if(view){
+    view.innerHTML='<div class="empty-state"><strong style="color:var(--ink)">'+escapeHtml(clearedName)+' hasn’t shared their list yet</strong><br>Check back soon — once they fill out the questionnaire on the left and tap Save, it will show up here instantly.</div>';
+  }
+  if(loadStatus){
+    loadStatus.textContent=clearedName+' hasn’t shared their list yet.';
+    loadStatus.className='status';
+  }
+}
+
 /* Clear my list: tap once to arm, tap again to delete the saved row */
 favClearBtn.addEventListener('click', function(){
   var status=document.getElementById('favStatus');
@@ -467,6 +483,7 @@ favClearBtn.addEventListener('click', function(){
         var hint0=document.getElementById('favLoadMineStatus');
         hint0.textContent='No saved list for '+name+' — fill in what you like and tap Save.';
         hint0.className='status';
+        refreshGiverViewIfShowing(name);
         refreshSharedPills();
         return;
       }
@@ -478,6 +495,7 @@ favClearBtn.addEventListener('click', function(){
       hint.textContent='Your saved list was just cleared — fill in what you like and tap Save to start a new one.';
       hint.className='status';
       showToast('Your list has been cleared.');
+      refreshGiverViewIfShowing(name);
       refreshSharedPills();
     })
     .catch(function(){
