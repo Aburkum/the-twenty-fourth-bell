@@ -8,21 +8,21 @@
 <title>Family Christmas Gift Exchange</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     --bg:#FFFBF2; --bg2:#FFF6E6; --card:#FFFFFF; --card-border:#E8DDC8;
-    --ink:#1A2E22; --muted:#5A6B5E; --evergreen:#1B4332; --evergreen2:#2D6A4F;
+    --ink:#14231B; --muted:#4E5F52; --evergreen:#0B3524; --evergreen2:#1A5C3F;
     --red:#9B2226; --red-soft:#FDF0EE; --gold:#B7791F; --gold-soft:#FEF3C7;
-    --teal-soft:#E6F4EA; --shadow:0 8px 30px rgba(27,67,50,.10);
+    --teal-soft:#E2EFE4; --shadow:0 8px 30px rgba(11,53,36,.13);
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#0F1F18; --bg2:#132A20; --card:#1A3327; --card-border:#2A4A38;
+      --bg:#08170F; --bg2:#0C2115; --card:#10251A; --card-border:#22402E;
       --ink:#F3EFE6; --muted:#A8B8AC; --evergreen:#40916C; --evergreen2:#52B788;
       --red:#E07A7A; --red-soft:#3A2222; --gold:#E9C46A; --gold-soft:#332A12;
-      --teal-soft:#1E3D2C; --shadow:0 8px 30px rgba(0,0,0,.35);
+      --teal-soft:#16301F; --shadow:0 8px 30px rgba(0,0,0,.4);
     }
   }
   *{box-sizing:border-box}
@@ -33,19 +33,19 @@
   .wrap{max-width:980px;margin:0 auto;padding:0 18px 48px}
   /* Hero */
   .hero{margin:0 -18px;padding:36px 22px 28px;background:var(--evergreen);color:#FFF8E7;text-align:center;position:relative;overflow:hidden}
-  @media (prefers-color-scheme: dark){.hero{background:#0B1A13}}
+  @media (prefers-color-scheme: dark){.hero{background:#04100A}}
   .hero::before,.hero::after{content:"";position:absolute;width:220px;height:220px;border:1px solid rgba(255,248,231,.14);border-radius:50%}
   .hero::before{left:-80px;top:-90px}.hero::after{right:-70px;bottom:-110px}
   .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-  .hero h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(34px,6vw,54px);line-height:1.05;margin:16px auto 10px;max-width:700px;font-weight:800}
+  .hero h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(40px,7vw,62px);line-height:1.05;margin:16px auto 10px;max-width:700px;font-weight:700;letter-spacing:.01em}
   .hero p{margin:0 auto;max-width:620px;color:#D8E8D8;font-size:17px;line-height:1.6}
   .hero-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px;position:relative;z-index:1}
-  .stat{background:#FFF8E7;color:#1B4332;border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px}
+  .stat{background:#FFF8E7;color:#0B3524;border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px}
   .stat span{color:#9B2226}
   /* Sections */
   .section{margin-top:28px}
   .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
-  .section-head h2{font-family:"Playfair Display",Georgia,serif;font-size:28px;line-height:1.1;margin:0}
+  .section-head h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:33px;line-height:1.1;margin:0;font-weight:700}
   .section-head p{margin:4px 0 0;color:var(--muted);max-width:560px}
   /* Households */
   .households{display:grid;grid-template-columns:1fr;gap:14px}
@@ -53,7 +53,7 @@
   .house{background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
   .house-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
   .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-  .dot-1{background:#2D6A4F}.dot-2{background:#9B2226}.dot-3{background:#B7791F}
+  .dot-1{background:#1A5C3F}.dot-2{background:#9B2226}.dot-3{background:#B7791F}
   .house h3{margin:0;font-size:15px;letter-spacing:.04em;text-transform:uppercase;flex:1;min-width:0}
   .house-count{margin-left:auto;font-size:13px;font-weight:700;color:var(--muted);background:var(--bg2);padding:4px 8px;border-radius:999px;white-space:nowrap;flex-shrink:0}
   .names{display:flex;flex-wrap:wrap;gap:8px}
@@ -68,14 +68,14 @@
   .btn-row .btn{flex:1;min-width:150px;max-width:260px}
   .status{margin-top:14px;font-size:14px;color:var(--muted);min-height:22px}
   .status.success{color:var(--evergreen2);font-weight:700}
-  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#1B4332;color:#FFF8E7;padding:12px 18px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#0B3524;color:#FFF8E7;padding:12px 18px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:90vw;text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .footer{margin-top:28px;text-align:center;color:var(--muted);font-size:14px;line-height:1.6;padding:0 8px}
   /* Favorites */
   .fav-grid{display:grid;grid-template-columns:1fr;gap:14px}
   @media(min-width:760px){.fav-grid{grid-template-columns:1fr 1fr}}
   .fav-card{background:var(--card);border:1px solid var(--card-border);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
-  .fav-card h3{font-family:"Playfair Display",Georgia,serif;font-size:22px;margin:0 0 6px}
+  .fav-card h3{font-family:"Cormorant Garamond",Georgia,serif;font-size:26px;margin:0 0 6px;font-weight:700}
   .fav-card>p{margin:0 0 14px;color:var(--muted);font-size:15px}
   .field{margin-bottom:12px}
   .field label{display:block;font-weight:700;font-size:14.5px;margin-bottom:5px}
@@ -89,7 +89,7 @@
   .btn-clear{background:transparent;color:var(--red);border:1px solid var(--red);width:100%;font-size:15px}
   .btn-clear.armed{background:var(--red);color:#fff;box-shadow:0 6px 18px rgba(155,34,38,.25)}
   .btn-clear:disabled{opacity:.6;cursor:wait}
-  .fav-list h4{font-family:"Playfair Display",Georgia,serif;font-size:20px;margin:0 0 10px}
+  .fav-list h4{font-family:"Cormorant Garamond",Georgia,serif;font-size:24px;margin:0 0 10px;font-weight:700}
   .fav-row{margin-bottom:10px}
   .fav-row .k{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--evergreen2)}
   .fav-row .v{font-size:16px;white-space:pre-wrap;overflow-wrap:break-word}
