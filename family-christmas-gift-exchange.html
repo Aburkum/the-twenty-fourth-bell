@@ -61,6 +61,8 @@
   .name-pill{background:var(--bg);border:1px solid var(--card-border);padding:8px 12px;border-radius:999px;font-weight:600;font-size:15px;font:inherit;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s}
   .name-pill:hover{border-color:var(--evergreen2);background:var(--teal-soft)}
   .name-pill:active{transform:scale(.97)}
+  .name-pill.has-list{background:#FFFFFF;color:#14231B;border-color:#FFFFFF;font-weight:700}
+  .name-pill.has-list:hover{background:#FFFFFF;border-color:var(--gold)}
   .btn{appearance:none;border:0;cursor:pointer;font-weight:800;font-size:16px;border-radius:999px;padding:13px 22px;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px}
   .btn-primary{background:var(--red);color:white;box-shadow:0 6px 18px rgba(155,34,38,.25);width:100%;max-width:420px}
   @media (prefers-color-scheme: dark){.btn-primary{background:#B4232A}}
@@ -574,6 +576,9 @@ function refreshSharedPills(){
       if(res.error){ wrap.innerHTML='<span style="color:var(--muted);font-size:14px">Couldn’t load sharing status right now.</span>'; return; }
       var shared={};
       (res.data||[]).forEach(function(r){ if(r.answers && hasAnyAnswer(cleanAnswers(r.answers))) shared[r.person]=true; });
+      document.querySelectorAll('.name-pill[data-person]').forEach(function(pill){
+        pill.classList.toggle('has-list', !!shared[pill.getAttribute('data-person')]);
+      });
       wrap.innerHTML=PARTICIPANTS.map(function(p){
         return shared[p.name]
           ? '<span class="shared-pill">✓ '+escapeHtml(p.name)+'</span>'
