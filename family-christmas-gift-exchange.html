@@ -121,6 +121,9 @@
   .shared-pill{font-size:13px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--teal-soft);color:var(--evergreen);border:1px solid var(--card-border)}
   .shared-pill.pending{background:var(--bg);color:var(--muted);font-weight:600}
   .empty-state{background:var(--bg2);border:1px dashed var(--card-border);border-radius:12px;padding:16px;text-align:center;color:var(--muted)}
+  .btn-clear{background:transparent;color:var(--red);border:1px solid var(--red);width:100%;font-size:15px}
+  .btn-clear.armed{background:var(--red);color:#fff;box-shadow:0 6px 18px rgba(155,34,38,.25)}
+  .btn-clear:disabled{opacity:.6;cursor:wait}
   .fav-list h4{font-family:"Playfair Display",Georgia,serif;font-size:20px;margin:0 0 10px}
   .fav-row{margin-bottom:10px}
   .fav-row .k{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--evergreen2)}
@@ -279,6 +282,8 @@
           <textarea id="fav-skip" rows="2" placeholder="e.g. no candles, no peanuts, no gag gifts"></textarea>
         </div>
         <button class="btn btn-primary" id="favSaveBtn" type="button" style="max-width:none">Save My Favorites</button>
+        <button class="btn btn-clear" id="favClearBtn" type="button" style="margin-top:10px">Clear my list</button>
+        <p style="margin:6px 0 0;color:var(--muted);font-size:13.5px;text-align:center">Removes your saved list completely. You'll be asked to tap twice so it can't happen by accident.</p>
         <div class="status" id="favStatus" aria-live="polite"></div>
         <div class="fav-list" id="favPreview" style="display:none"></div>
       </article>
@@ -626,8 +631,22 @@ function formatSavedDate(iso){
   }catch(e){ return ''; }
 }
 
+/* Clear-my-list button state */
+var favClearBtn=document.getElementById('favClearBtn');
+var clearArmed=false;
+var clearArmTimer=null;
+function disarmClearBtn(){
+  clearArmed=false;
+  if(clearArmTimer){ clearTimeout(clearArmTimer); clearArmTimer=null; }
+  if(favClearBtn && !favClearBtn.disabled){
+    favClearBtn.textContent='Clear my list';
+    favClearBtn.classList.remove('armed');
+  }
+}
+
 /* Load my existing list when I pick my name, so editing is easy */
 favNameSel.addEventListener('change', function(){
+  disarmClearBtn();
   var name=favNameSel.value;
   var hint=document.getElementById('favLoadMineStatus');
   var status=document.getElementById('favStatus');
@@ -689,6 +708,7 @@ document.getElementById('favSaveBtn').addEventListener('click', function(){
         status.className='status';
         return;
       }
+      disarmClearBtn();
       var preview=document.getElementById('favPreview');
       preview.innerHTML=favListHtml(name, answers);
       preview.style.display='block';
@@ -703,6 +723,88 @@ document.getElementById('favSaveBtn').addEventListener('click', function(){
     .catch(function(){
       btn.disabled=false; btn.textContent=orig;
       status.textContent='Saving didn’t go through. Please try again in a moment.';
+      status.className='status';
+    });
+});
+
+/* Clear my list: tap once to arm, tap again to delete the saved row */
+favClearBtn.addEventListener('click', function(){
+  var status=document.getElementById('favStatus');
+  var name=favNameSel.value;
+  if(!name){
+    disarmClearBtn();
+    status.textContent='Pick your name first, so we know whose list to clear.';
+    status.className='status';
+    favNameSel.focus();
+    return;
+  }
+  if(!sb){
+    disarmClearBtn();
+    status.textContent='Couldn’t connect to clear your list right now. Check your connection and try again — nothing was deleted.';
+    status.className='status';
+    return;
+  }
+  if(!clearArmed){
+    clearArmed=true;
+    favClearBtn.textContent='Tap again to delete';
+    favClearBtn.classList.add('armed');
+    status.textContent='Tap “Tap again to delete” to permanently remove '+name+'’s saved list — or wait a few seconds to cancel.';
+    status.className='status';
+    if(clearArmTimer) clearTimeout(clearArmTimer);
+    clearArmTimer=setTimeout(function(){
+      if(clearArmed){
+        disarmClearBtn();
+        if(favNameSel.value===name){
+          status.textContent='';
+          status.className='status';
+        }
+      }
+    }, 6000);
+    return;
+  }
+  /* Second tap — actually delete */
+  if(clearArmTimer){ clearTimeout(clearArmTimer); clearArmTimer=null; }
+  clearArmed=false;
+  favClearBtn.disabled=true;
+  favClearBtn.textContent='Deleting…';
+  favClearBtn.classList.remove('armed');
+  status.textContent='Deleting '+name+'’s saved list…';
+  status.className='status';
+  sb.from('gift_exchange_lists').delete().eq('person', name).select('person')
+    .then(function(res){
+      favClearBtn.disabled=false;
+      favClearBtn.textContent='Clear my list';
+      if(res.error){
+        status.textContent='Deleting didn’t go through — your saved list is still there. Please try again in a moment.';
+        status.className='status';
+        return;
+      }
+      if(!res.data || res.data.length===0){
+        /* Nothing was deleted server-side — don't claim a delete that didn't happen */
+        fillFavForm({});
+        document.getElementById('favPreview').style.display='none';
+        status.textContent='No saved list was found for '+name+' — the form has been cleared, and there was nothing saved to delete.';
+        status.className='status';
+        var hint0=document.getElementById('favLoadMineStatus');
+        hint0.textContent='No saved list for '+name+' — fill in what you like and tap Save.';
+        hint0.className='status';
+        refreshSharedPills();
+        return;
+      }
+      fillFavForm({});
+      document.getElementById('favPreview').style.display='none';
+      status.textContent='✓ Cleared, '+name+'. Your saved list has been deleted — your giver will no longer see it.';
+      status.className='status success';
+      var hint=document.getElementById('favLoadMineStatus');
+      hint.textContent='Your saved list was just cleared — fill in what you like and tap Save to start a new one.';
+      hint.className='status';
+      showToast('Your list has been cleared.');
+      refreshSharedPills();
+    })
+    .catch(function(){
+      favClearBtn.disabled=false;
+      favClearBtn.textContent='Clear my list';
+      status.textContent='Deleting didn’t go through — your saved list is still there. Please try again in a moment.';
       status.className='status';
     });
 });
