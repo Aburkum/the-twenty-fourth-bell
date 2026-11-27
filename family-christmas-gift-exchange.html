@@ -57,7 +57,9 @@
   .house h3{margin:0;font-size:15px;letter-spacing:.04em;text-transform:uppercase;flex:1;min-width:0}
   .house-count{margin-left:auto;font-size:13px;font-weight:700;color:var(--muted);background:var(--bg2);padding:4px 8px;border-radius:999px;white-space:nowrap;flex-shrink:0}
   .names{display:flex;flex-wrap:wrap;gap:8px}
-  .name-pill{background:var(--bg);border:1px solid var(--card-border);padding:8px 12px;border-radius:999px;font-weight:600;font-size:15px}
+  .name-pill{background:var(--bg);border:1px solid var(--card-border);padding:8px 12px;border-radius:999px;font-weight:600;font-size:15px;font:inherit;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s}
+  .name-pill:hover{border-color:var(--evergreen2);background:var(--teal-soft)}
+  .name-pill:active{transform:scale(.97)}
   .btn{appearance:none;border:0;cursor:pointer;font-weight:800;font-size:16px;border-radius:999px;padding:13px 22px;display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px}
   .btn-primary{background:var(--red);color:white;box-shadow:0 6px 18px rgba(155,34,38,.25);width:100%;max-width:420px}
   @media (prefers-color-scheme: dark){.btn-primary{background:#B4232A}}
@@ -113,21 +115,21 @@
     <div class="section-head">
       <div>
         <h2 id="households-title">Who's in</h2>
-        <p>Everyone taking part in this year's exchange.</p>
+        <p>Everyone taking part in this year's exchange. Tap a name to jump straight to their list.</p>
       </div>
     </div>
     <div class="households">
       <article class="house">
         <div class="house-top"><span class="dot dot-1"></span><h3>Household One</h3><span class="house-count">4 people</span></div>
-        <div class="names"><span class="name-pill">Andrew</span><span class="name-pill">Patience</span><span class="name-pill">Stevie</span><span class="name-pill">Serenity</span></div>
+        <div class="names"><button type="button" class="name-pill" data-person="Andrew">Andrew</button><button type="button" class="name-pill" data-person="Patience">Patience</button><button type="button" class="name-pill" data-person="Stevie">Stevie</button><button type="button" class="name-pill" data-person="Serenity">Serenity</button></div>
       </article>
       <article class="house">
         <div class="house-top"><span class="dot dot-2"></span><h3>Household Two</h3><span class="house-count">5 people</span></div>
-        <div class="names"><span class="name-pill">Sarah</span><span class="name-pill">Jay</span><span class="name-pill">Declan</span><span class="name-pill">Mara</span><span class="name-pill">Madison</span></div>
+        <div class="names"><button type="button" class="name-pill" data-person="Sarah">Sarah</button><button type="button" class="name-pill" data-person="Jay">Jay</button><button type="button" class="name-pill" data-person="Declan">Declan</button><button type="button" class="name-pill" data-person="Mara">Mara</button><button type="button" class="name-pill" data-person="Madison">Madison</button></div>
       </article>
       <article class="house">
         <div class="house-top"><span class="dot dot-3"></span><h3>Household Three</h3><span class="house-count">2 people</span></div>
-        <div class="names"><span class="name-pill">Steve</span><span class="name-pill">Lynn</span></div>
+        <div class="names"><button type="button" class="name-pill" data-person="Steve">Steve</button><button type="button" class="name-pill" data-person="Lynn">Lynn</button></div>
       </article>
     </div>
   </section>
@@ -179,7 +181,7 @@
         <div class="fav-list" id="favPreview" style="display:none"></div>
       </article>
 
-      <article class="fav-card">
+      <article class="fav-card" id="giverCard">
         <h3>See your person's list</h3>
         <p>Pick your person's name below and their saved list shows up here — gift ideas, sorted. No code to paste, nothing to sign into.</p>
         <div class="field">
@@ -545,6 +547,22 @@ function loadPersonList(){
 }
 document.getElementById('favLoadBtn').addEventListener('click', loadPersonList);
 favViewSel.addEventListener('change', function(){ if(favViewSel.value) loadPersonList(); });
+
+/* Tap a name in the "Who's in" household cards: select that person in
+   the giver view, load their list, and scroll the giver panel into view */
+var giverCard=document.getElementById('giverCard');
+document.querySelectorAll('.name-pill[data-person]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var person=btn.getAttribute('data-person');
+    if(!person) return;
+    favViewSel.value=person;
+    loadPersonList();
+    if(giverCard){
+      var reduceMotion=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      giverCard.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block:'start'});
+    }
+  });
+});
 
 /* Who's shared so far */
 function refreshSharedPills(){
